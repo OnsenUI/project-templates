@@ -86,7 +86,6 @@ gulp.task('browser-sync', function() {
     ghostMode: false,
     notify: false,
     debounce: 200,
-    port: 8901,
     startPath: 'index.html'
   });
 
