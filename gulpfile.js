@@ -23,7 +23,11 @@ gulp.task('update-onsenui', function(done) {
       gulp.src('temp/onsenui/build/{js,css,stylus}/**/*')
         .pipe(gulp.dest('base/www/lib/onsen/'))
         .on('end', function() {
-          del(['temp'], done);
+          gulp.src('temp/onsenui/build/css/onsen-css-*.css')
+            .pipe(gulp.dest('base/www/styles/'))
+            .on('end', function() {
+              del(['temp'], done);
+            });
         });
     });
 });
