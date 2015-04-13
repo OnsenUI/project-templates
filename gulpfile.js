@@ -4,6 +4,7 @@ var merge = require('event-stream').merge;
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
 var del = require('del');
+var bower = require('bower');
 
 var names = [
   'master-detail',
@@ -11,6 +12,21 @@ var names = [
   'tab-bar',
   'split-view'
 ];
+
+///////////////
+// update-onsenui
+///////////////
+gulp.task('update-onsenui', function(done) {
+  bower.commands
+    .install(['onsenui'], {}, {directory: 'temp'})
+    .on('end', function(installed) {
+      gulp.src('temp/onsenui/build/{js,css,stylus}/**/*')
+        .pipe(gulp.dest('base/www/lib/onsen/'))
+        .on('end', function() {
+          del(['temp'], done);
+        });
+    });
+});
 
 ///////////////
 // prepare
@@ -77,7 +93,7 @@ gulp.task('serve', ['prepare', 'browser-sync'], function() {
 // build
 ///////////////
 gulp.task('build', function(done) {
-  runSequence('clean', 'compress', done);
+  runSequence('clean', 'update-onsenui', 'compress', done);
 });
 
 ///////////////
