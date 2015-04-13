@@ -1,0 +1,26 @@
+{
+  "name": "onsenapp",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.6.1",
+    "gulp": "^3.8.7",
+    "gulp-autoprefixer": "^2.1.0",
+    "gulp-cached": "^1.0.1",
+    "gulp-jshint": "^1.8.4",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-plumber": "^1.0.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-shell": "^0.4.0",
+    "gulp-stylus": "^2.0.1",
+    "gulp-task-listing": "^1.0.0",
+    "jshint-stylish": "^1.0.1",
+    "run-sequence": "^1.0.2"
+  }
+}

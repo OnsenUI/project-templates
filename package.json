@@ -1,0 +1,31 @@
+{
+  "name": "onsen-project-templates",
+  "version": "0.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/OnsenUI/project-templates.git"
+  },
+  "author": "Mitsunori KUBOTA<anatoo.jp@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OnsenUI/project-templates/issues"
+  },
+  "homepage": "https://github.com/OnsenUI/project-templates",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-zip": "^3.0.2",
+    "gulp-load-plugins": "^0.10.0",
+    "browser-sync": "^2.6.1",
+    "run-sequence": "^1.0.2",
+    "del": "^1.1.1"
+  },
+  "dependencies": {
+    "event-stream": "^3.3.0"
+  }
+}
