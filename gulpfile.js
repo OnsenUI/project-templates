@@ -20,13 +20,17 @@ gulp.task('update-onsenui', function(done) {
   bower.commands
     .install(['onsenui'], {}, {directory: 'temp'})
     .on('end', function(installed) {
-      gulp.src('temp/onsenui/build/{js,css,stylus}/**/*')
-        .pipe(gulp.dest('base/www/lib/onsen/'))
+      gulp.src('temp/onsenui/build/js/ons*.js')
+        .pipe(gulp.dest('base/www/lib/onsen/js/'))
         .on('end', function() {
-          gulp.src('temp/onsenui/build/css/onsen-css-*.css')
-            .pipe(gulp.dest('base/www/styles/'))
+          gulp.src('temp/onsenui/build/js/angular/**/*')
+            .pipe(gulp.dest('base/www/lib/angular/'))
             .on('end', function() {
-              del(['temp'], done);
+              gulp.src('temp/onsenui/build/{css,stylus}/**/*')
+                .pipe(gulp.dest('base/www/lib/onsen/'))
+                .on('end', function() {
+                  del(['temp'], done);
+                });
             });
         });
     });
