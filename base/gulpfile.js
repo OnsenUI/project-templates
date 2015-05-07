@@ -26,7 +26,7 @@ gulp.task('compile-stylus', function() {
       path.basename = 'onsen-css-components-' + path.basename;
       path.ext = 'css';
     }))
-    .pipe(gulp.dest(__dirname + '/www/styles/'));
+    .pipe(gulp.dest(__dirname + '/www/lib/onsen/css/'));
 
   // needs for compile
   function mylighten(param) {

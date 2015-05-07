@@ -31,11 +31,13 @@ You should see running app on browser and you can start to develop your app with
     www/          --> Asset files for app
       index.html  --> App entry point
       js/
-      styles/
-      lib/onsen/
-        stylus/   --> Stylus files for onsen-css-components.css
-        js/       --> JS files for Onsen UI
-        css/      --> CSS files for Onsen UI
+      lib/
+        angular/  --> AngularJS dependency
+        onsen/
+          stylus/ --> Stylus files for onsen-css-components.css
+          js/     --> JS files for Onsen UI
+          css/    --> CSS files for Onsen UI
+      scripts/    --> Cordova scripts directory
     platforms/    --> Cordova platform directory
     plugins/      --> Cordova plugin directory
     merges/       --> Cordova merge directory
