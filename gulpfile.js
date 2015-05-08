@@ -40,7 +40,7 @@ gulp.task('update-onsenui', function(done) {
 // prepare-cordova
 ///////////////
 gulp.task('prepare-cordova', function(done) {
-  var stream = gulp.src(['base/**/*', '!base/node_modules/**/*', '!base/node_modules/'], {dot: true});
+  var stream = gulp.src(['base/**/*', '!base/node_modules/**/*', '!base/node_modules/', '!base/scripts/**/*', '!base/scripts/'], {dot: true});
 
   names.forEach(function(name) {
     stream = stream.pipe(gulp.dest('gen/' + name));
