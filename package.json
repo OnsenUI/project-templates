@@ -29,6 +29,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
     "gulp-zip": "^3.0.2",
-    "run-sequence": "^1.0.2"
+    "run-sequence": "^1.0.2",
+    "yargs": "^3.8.0"
   }
 }
