@@ -61,9 +61,20 @@ gulp.task('prepare-cordova', function(done) {
 // prepare-VS2015
 ///////////////
 gulp.task('prepare-VS2015', function(done) {
+  var isJSTemplateFile = function(file) {
+    return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
+  }, isIndexHtml = function(file) {
+    return file.path.split('/').pop() === 'index.html';
+  }, isBundleFile = function(file) {
+    return file.path.split('/').pop().match(/\w+_all\..+/);
+  };
+
   var streamBase = gulp.src(['VS2015/base/**/*', '!VS2015/base/VSIX/**/*', '!VS2015/base/VSIX/'], {dot: true, base: 'VS2015/base'});
-  var streamBaseJS = gulp.src(['base/merges/**/*', 'base/www/**/*'], {dot: true, base: 'base'});
-  var streamBaseTS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/scripts/**/*', '!base/www/scripts/', 'base/scripts/**/*'], {dot: true, base: 'base'});
+  var streamBaseJS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/lib/onsen/stylus/**/*', '!base/www/lib/onsen/stylus/'], {dot: true, base: 'base'})
+      .pipe($.ignore.exclude(isBundleFile)); // Ignore heavy bundle libraries;
+  var streamBaseTS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/lib/onsen/stylus/**/*', '!base/www/lib/onsen/stylus/',
+                              '!base/www/scripts/**/*', '!base/www/scripts/', 'base/scripts/**/*'], {dot: true, base: 'base'})
+      .pipe($.ignore.exclude(isBundleFile)); // Ignore heavy bundle libraries;
 
   var streams = names.map(function(name) {
     streamBase = streamBase
@@ -79,12 +90,6 @@ gulp.task('prepare-VS2015', function(done) {
   streams = streams.reduce(function(a, b) {
     return a.concat(b);
   });
-
-  var isJSTemplateFile = function(file) {
-    return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
-  }, isIndexHtml = function(file) {
-    return file.path.split('/').pop() === 'index.html';
-  };
 
   merge(streams).on('end', function() {
     gulp.src(['templates/**/*', 'VS2015/templates/**/*', '!VS2015/templates/*/TS/*', '!VS2015/templates/*/TS'])
@@ -188,7 +193,7 @@ gulp.task('generate-vsix', ['compress-VS2015'], function(done) {
     .pipe(gulp.dest('VS2015/gen/VSIX/'))
     .on('end', function() {
       gulp.src(['VS2015/gen/*.zip'])
-        .pipe(gulp.dest('VS2015/gen/VSIX/ProjectTemplates/Apache Cordova Apps/'))
+        .pipe(gulp.dest('VS2015/gen/VSIX/ProjectTemplates/Apache%20Cordova%20Apps/'))
         .on('end', function() {
           gulp.src(['VS2015/gen/VSIX/**/*'], {dot: false, base: 'VS2015/gen/VSIX'})
           .pipe($.zip('Onsen UI Extension.vsix'))
