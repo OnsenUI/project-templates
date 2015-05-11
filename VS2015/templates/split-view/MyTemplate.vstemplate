@@ -1,0 +1,99 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>Onsen UI Split View</Name>
+    <Description>Onsen UI Split View template for Cordova apps in Visual Studio 2015.</Description>
+    <ProjectType>JavaScript</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>Onsen UI Split View</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <Icon>__TemplateIcon.png</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+    <CreateInPlace>true</CreateInPlace>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="Onsen UI Split View.jsproj" File="Onsen UI Split View.jsproj" ReplaceParameters="true">
+      <Folder Name="merges" TargetFolderName="merges">
+        <Folder Name="android" TargetFolderName="android">
+          <Folder Name="scripts" TargetFolderName="scripts">
+            <ProjectItem ReplaceParameters="true" TargetFileName="android2.3-jscompat.js">android2.3-jscompat.js</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="platformOverrides.js">platformOverrides.js</ProjectItem>
+          </Folder>
+        </Folder>
+        <Folder Name="ios" TargetFolderName="ios" />
+        <Folder Name="windows" TargetFolderName="windows">
+          <Folder Name="scripts" TargetFolderName="scripts">
+            <ProjectItem ReplaceParameters="true" TargetFileName="platformOverrides.js">platformOverrides.js</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="winstore-jscompat.js">winstore-jscompat.js</ProjectItem>
+          </Folder>
+        </Folder>
+        <Folder Name="wp8" TargetFolderName="wp8" />
+      </Folder>
+      <Folder Name="www" TargetFolderName="www">
+        <Folder Name="images" TargetFolderName="images" />
+        <Folder Name="lib" TargetFolderName="lib">
+          <Folder Name="angular" TargetFolderName="angular">
+            <ProjectItem ReplaceParameters="true" TargetFileName="angular.js">angular.js</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="angular.min.js">angular.min.js</ProjectItem>
+            <ProjectItem ReplaceParameters="false" TargetFileName="angular.min.js.gzip">angular.min.js.gzip</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="angular.min.js.map">angular.min.js.map</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="angular-csp.css">angular-csp.css</ProjectItem>
+          </Folder>
+          <Folder Name="onsen" TargetFolderName="onsen">
+            <Folder Name="css" TargetFolderName="css">
+              <Folder Name="font_awesome" TargetFolderName="font_awesome">
+                <Folder Name="css" TargetFolderName="css">
+                  <ProjectItem ReplaceParameters="true" TargetFileName="font-awesome.css">font-awesome.css</ProjectItem>
+                  <ProjectItem ReplaceParameters="true" TargetFileName="font-awesome.min.css">font-awesome.min.css</ProjectItem>
+                </Folder>
+                <Folder Name="fonts" TargetFolderName="fonts">
+                  <ProjectItem ReplaceParameters="false" TargetFileName="FontAwesome.otf">FontAwesome.otf</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.eot">fontawesome-webfont.eot</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.svg">fontawesome-webfont.svg</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.ttf">fontawesome-webfont.ttf</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.woff">fontawesome-webfont.woff</ProjectItem>
+                </Folder>
+              </Folder>
+              <Folder Name="ionicons" TargetFolderName="ionicons">
+                <Folder Name="css" TargetFolderName="css">
+                  <ProjectItem ReplaceParameters="true" TargetFileName="ionicons.css">ionicons.css</ProjectItem>
+                  <ProjectItem ReplaceParameters="true" TargetFileName="ionicons.min.css">ionicons.min.css</ProjectItem>
+                </Folder>
+                <Folder Name="fonts" TargetFolderName="fonts">
+                  <ProjectItem ReplaceParameters="false" TargetFileName="ionicons.eot">ionicons.eot</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="ionicons.svg">ionicons.svg</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="ionicons.ttf">ionicons.ttf</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="ionicons.woff">ionicons.woff</ProjectItem>
+                </Folder>
+              </Folder>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components.css">onsen-css-components.css</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components-blue-basic-theme.css">onsen-css-components-blue-basic-theme.css</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components-blue-theme.css">onsen-css-components-blue-theme.css</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components-dark-theme.css">onsen-css-components-dark-theme.css</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components-default.css">onsen-css-components-default.css</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components-purple-theme.css">onsen-css-components-purple-theme.css</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components-sunshine-theme.css">onsen-css-components-sunshine-theme.css</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsenui.css">onsenui.css</ProjectItem>
+            </Folder>
+            <Folder Name="js" TargetFolderName="js">
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsenui.js">onsenui.js</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="onsenui.min.js">onsenui.min.js</ProjectItem>
+            </Folder>
+          </Folder>
+        </Folder>
+        <Folder Name="scripts" TargetFolderName="scripts">
+          <ProjectItem ReplaceParameters="true" TargetFileName="index.js">index.js</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="platformOverrides.js">platformOverrides.js</ProjectItem>
+        </Folder>
+        <ProjectItem ReplaceParameters="true" TargetFileName="index.html">index.html</ProjectItem>
+      </Folder>
+      <ProjectItem ReplaceParameters="true" TargetFileName="config.xml">config.xml</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="taco.json">taco.json</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

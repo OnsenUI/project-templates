@@ -42,6 +42,7 @@ You should see running app on browser and you can start to develop your app with
     plugins/      --> Cordova plugin directory
     merges/       --> Cordova merge directory
     hooks/        --> Cordova hook directory
+    scripts/      --> Cordova TS scripts directory and TS definitions
 
 ## Gulp Tasks
 
