@@ -57,19 +57,60 @@ gulp.task('prepare-cordova', function(done) {
 // prepare-VS2015
 ///////////////
 gulp.task('prepare-VS2015', function(done) {
-  var stream = gulp.src(['base/merges/**/*', 'base/www/**/*'], {dot: true, base: 'base'});
-  var stream2 = gulp.src(['VS2015/base/**/*'], {dot: true, base: 'VS2015/base'});
+  var streamBase = gulp.src(['VS2015/base/**/*'], {dot: true, base: 'VS2015/base'});
+  var streamBaseJS = gulp.src(['base/merges/**/*', 'base/www/**/*'], {dot: true, base: 'base'});
+  var streamBaseTS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/scripts/**/*', '!base/www/scripts/', 'base/scripts/**/*'], {dot: true, base: 'base'});
 
-  names.forEach(function(name) {
-    stream = stream.pipe(gulp.dest('VS2015/gen/' + name));
-    stream2 = stream2.pipe(gulp.dest('VS2015/gen/' + name));
+  var streams = names.map(function(name) {
+    streamBase = streamBase
+      .pipe(gulp.dest('VS2015/gen/' + name))
+      .pipe(gulp.dest('VS2015/gen/' + name + '-TS'));
+
+    streamBaseJS = streamBaseJS.pipe(gulp.dest('VS2015/gen/' + name));
+    streamBaseTS = streamBaseTS.pipe(gulp.dest('VS2015/gen/' + name + '-TS'));
+
+    return [streamBase, streamBaseJS, streamBaseTS];
   });
 
-  stream.on('end', function() {
-    gulp.src(['templates/**/*', 'VS2015/templates/**/*'])
+  streams = streams.reduce(function(a, b) {
+    return a.concat(b);
+  });
+
+  var isJSTemplateFile = function(file) {
+    return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
+  }, isIndexHtml = function(file) {
+    return file.path.split('/').pop() === 'index.html';
+  };
+
+  merge(streams).on('end', function() {
+    gulp.src(['templates/**/*', 'VS2015/templates/**/*', '!VS2015/templates/*/TS/*', '!VS2015/templates/*/TS'])
+      // JavaScript templates
       .pipe(gulp.dest('VS2015/gen/'))
-      .on('end', done);
+      // TypeScript templates
+      .pipe($.ignore.exclude(isJSTemplateFile)) // Ignore files for JS Templates
+      .pipe($.rename(function(path) { // Modify the path
+        path.dirname = path.dirname.replace(/^([\w,-]+)/, '$1-TS');
+      }))
+      .pipe($.if(isIndexHtml, $.replace('platformOverrides.js', 'appBundle.js'))) // Some necessary modifications to index.html
+      .pipe($.if(isIndexHtml, $.replace(/\n\s+.+scripts\/index.js.+\n/, '\n'))) // Delete one line
+      .pipe(gulp.dest('VS2015/gen/'))
+      .on('end', function() {
+        // More TS specific stuff
+        gulp.src(['VS2015/templates/*/TS/*'])
+          .pipe($.rename(function(path) {
+            path.dirname = path.dirname.replace(/\/TS/, '-TS');
+          }))
+          .pipe(gulp.dest('VS2015/gen/'))
+          .on('end', done);
+      });
   });
+});
+
+///////////////
+// prepare
+///////////////
+gulp.task('prepare', function(done) {
+  runSequence('prepare-cordova', 'prepare-VS2015', done);
 });
 
 ///////////////
@@ -100,20 +141,36 @@ gulp.task('compress-cordova', ['prepare-cordova'], function() {
 gulp.task('compress-VS2015', ['prepare-VS2015'], function() {
 
   var streams = names.map(function(name) {
-    var src = [
+    var srcJS = [
       __dirname + '/VS2015/gen/' + name + '/**/*',
-      '!.DS_Store',
-      '!node_modules'
+      '!.DS_Store'
+    ], srcTS = [
+      __dirname + '/VS2015/gen/' + name + '-TS/**/*',
+      '!.DS_Store'
     ];
 
-    var stream = gulp.src(src, {cwd : __dirname, dot: true})
+    var streamJS = gulp.src(srcJS, {cwd : __dirname, dot: true})
       .pipe($.zip('onsenui-' + name + '.zip'))
+      .pipe(gulp.dest('VS2015/gen/')),
+    streamTS = gulp.src(srcTS, {cwd : __dirname, dot: true})
+      .pipe($.zip('onsenui-' + name + '-TS.zip'))
       .pipe(gulp.dest('VS2015/gen/'));
 
-    return stream;
+    return [streamJS, streamTS];
   });
 
+  streams = streams.reduce(function(a, b) {
+      return a.concat(b);
+    });
+
   return merge.apply(null, streams);
+});
+
+///////////////
+// compress
+///////////////
+gulp.task('compress', function(done) {
+  runSequence('compress-cordova', 'compress-VS2015', done);
 });
 
 ///////////////
@@ -135,14 +192,14 @@ gulp.task('browser-sync', function() {
 // serve
 ///////////////
 gulp.task('serve', ['prepare-cordova', 'prepare-VS2015', 'browser-sync'], function() {
-  gulp.watch(['base/**/*', 'templates/**/*', '!node_modules'], ['prepare-cordova', 'prepare-VS2015']);
-});
+  gulp.watch(['base/**/*', 'templates/**/*', '!node_modules'], ['prepare'])
+;});
 
 ///////////////
 // build
 ///////////////
 gulp.task('build', function(done) {
-  runSequence('clean', 'update-onsenui', 'compress-cordova', 'compress-VS2015', done);
+  runSequence('clean', 'update-onsenui', 'compress', done);
 });
 
 gulp.task('build-cordova', function(done) {
