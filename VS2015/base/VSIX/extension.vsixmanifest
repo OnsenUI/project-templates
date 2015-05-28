@@ -1,0 +1,25 @@
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <Identity Id="d91dc5d2-128a-4416-b7e4-3b40c41d0316" Version="VSIXVERSION" Language="en-US" Publisher="Asial Corporation" />
+    <DisplayName>Onsen UI Templates for Visual Studio 2015</DisplayName>
+    <Description>Onsen UI templates for Cordova apps in Visual Studio 2015.</Description>
+    <MoreInfo>http://onsen.io/</MoreInfo>
+    <License>License.txt</License>
+    <Icon>onsen_icon_50.ico</Icon>
+    <PreviewImage>onsen_icon_150.png</PreviewImage>
+    <Tags>cordova</Tags>
+  </Metadata>
+  <Installation InstalledByMsi="false">
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0,20.0]" />
+    <InstallationTarget Version="[14.0,20.0)" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Version="[14.0,20.0)" Id="Microsoft.VisualStudio.Ultimate" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="[4.5,)" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" Version="[14.0]" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" Path="Onsen UI Extension.pkgdef" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="ProjectTemplates" />
+  </Assets>
+</PackageManifest>

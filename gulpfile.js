@@ -3,6 +3,7 @@ var $ = require('gulp-load-plugins')();
 var merge = require('event-stream').merge;
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
+var argv = require('yargs').argv;
 var del = require('del');
 var bower = require('bower');
 
@@ -12,6 +13,9 @@ var names = [
   'tab-bar',
   'split-view'
 ];
+
+// VSIX file versioning
+var vsixVersion = argv.vsix ? argv.vsix : '1.0.0';
 
 ///////////////
 // update-onsenui
@@ -57,9 +61,20 @@ gulp.task('prepare-cordova', function(done) {
 // prepare-VS2015
 ///////////////
 gulp.task('prepare-VS2015', function(done) {
-  var streamBase = gulp.src(['VS2015/base/**/*'], {dot: true, base: 'VS2015/base'});
-  var streamBaseJS = gulp.src(['base/merges/**/*', 'base/www/**/*'], {dot: true, base: 'base'});
-  var streamBaseTS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/scripts/**/*', '!base/www/scripts/', 'base/scripts/**/*'], {dot: true, base: 'base'});
+  var isJSTemplateFile = function(file) {
+    return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
+  }, isIndexHtml = function(file) {
+    return file.path.split('/').pop() === 'index.html';
+  }, isBundleFile = function(file) {
+    return file.path.split('/').pop().match(/\w+_all\..+/);
+  };
+
+  var streamBase = gulp.src(['VS2015/base/**/*', '!VS2015/base/VSIX/**/*', '!VS2015/base/VSIX/'], {dot: true, base: 'VS2015/base'});
+  var streamBaseJS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/lib/onsen/stylus/**/*', '!base/www/lib/onsen/stylus/'], {dot: true, base: 'base'})
+      .pipe($.ignore.exclude(isBundleFile)); // Ignore heavy bundle libraries;
+  var streamBaseTS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/lib/onsen/stylus/**/*', '!base/www/lib/onsen/stylus/',
+                              '!base/www/scripts/**/*', '!base/www/scripts/', 'base/scripts/**/*'], {dot: true, base: 'base'})
+      .pipe($.ignore.exclude(isBundleFile)); // Ignore heavy bundle libraries;
 
   var streams = names.map(function(name) {
     streamBase = streamBase
@@ -75,12 +90,6 @@ gulp.task('prepare-VS2015', function(done) {
   streams = streams.reduce(function(a, b) {
     return a.concat(b);
   });
-
-  var isJSTemplateFile = function(file) {
-    return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
-  }, isIndexHtml = function(file) {
-    return file.path.split('/').pop() === 'index.html';
-  };
 
   merge(streams).on('end', function() {
     gulp.src(['templates/**/*', 'VS2015/templates/**/*', '!VS2015/templates/*/TS/*', '!VS2015/templates/*/TS'])
@@ -117,7 +126,6 @@ gulp.task('prepare', function(done) {
 // compress-cordova
 ///////////////
 gulp.task('compress-cordova', ['prepare-cordova'], function() {
-
   var streams = names.map(function(name) {
     var src = [
       __dirname + '/gen/' + name + '/**/*',
@@ -139,7 +147,6 @@ gulp.task('compress-cordova', ['prepare-cordova'], function() {
 // compress-VS2015
 ///////////////
 gulp.task('compress-VS2015', ['prepare-VS2015'], function() {
-
   var streams = names.map(function(name) {
     var srcJS = [
       __dirname + '/VS2015/gen/' + name + '/**/*',
@@ -174,6 +181,29 @@ gulp.task('compress', function(done) {
 });
 
 ///////////////
+// generate-vsix
+///////////////
+gulp.task('generate-vsix', ['compress-VS2015'], function(done) {
+  var isVSIXManifest = function(file) {
+    return file.path.split('/').pop() === 'extension.vsixmanifest';
+  };
+
+  gulp.src(['VS2015/base/VSIX/**/*'])
+    .pipe($.if(isVSIXManifest, $.replace('VSIXVERSION', vsixVersion)))
+    .pipe(gulp.dest('VS2015/gen/VSIX/'))
+    .on('end', function() {
+      gulp.src(['VS2015/gen/*.zip'])
+        .pipe(gulp.dest('VS2015/gen/VSIX/ProjectTemplates/Apache%20Cordova%20Apps/'))
+        .on('end', function() {
+          gulp.src(['VS2015/gen/VSIX/**/*'], {dot: false, base: 'VS2015/gen/VSIX'})
+          .pipe($.zip('Onsen UI Extension.vsix'))
+          .pipe(gulp.dest('VS2015/gen/'))
+          .on('end', done);
+        });
+    });
+});
+
+///////////////
 // browser-sync
 ///////////////
 gulp.task('browser-sync', function() {
@@ -199,7 +229,7 @@ gulp.task('serve', ['prepare-cordova', 'prepare-VS2015', 'browser-sync'], functi
 // build
 ///////////////
 gulp.task('build', function(done) {
-  runSequence('clean', 'update-onsenui', 'compress', done);
+  runSequence('clean', 'update-onsenui', 'compress-cordova', 'generate-vsix', done);
 });
 
 gulp.task('build-cordova', function(done) {
@@ -207,7 +237,7 @@ gulp.task('build-cordova', function(done) {
 });
 
 gulp.task('build-VS2015', function(done) {
-  runSequence('clean', 'update-onsenui', 'compress-VS2015', done);
+  runSequence('clean', 'update-onsenui', 'generate-vsix', done);
 });
 
 ///////////////

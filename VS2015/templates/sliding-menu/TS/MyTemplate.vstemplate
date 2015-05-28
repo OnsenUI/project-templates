@@ -68,9 +68,6 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="platformOverrides.ts">platformOverrides.ts</ProjectItem>
       </Folder>
       <Folder Name="www" TargetFolderName="www">
-        <Folder Name="css" TargetFolderName="css">
-          <ProjectItem ReplaceParameters="true" TargetFileName="index.css">index.css</ProjectItem>
-        </Folder>
         <Folder Name="images" TargetFolderName="images" />
         <Folder Name="lib" TargetFolderName="lib">
           <Folder Name="angular" TargetFolderName="angular">
