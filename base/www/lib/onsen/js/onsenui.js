@@ -1,4 +1,4 @@
-/*! onsenui - v1.3.1 - 2015-04-30 */
+/*! onsenui - v1.3.5 - 2015-07-22 */
 // Copyright (c) Microsoft Open Technologies, Inc.  All rights reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 // JavaScript Dynamic Content shim for Windows Store apps
 (function () {
@@ -4964,7 +4964,7 @@ module.run(['$templateCache', function($templateCache) {
   $templateCache.put('templates/back_button.tpl',
     '<span \n' +
     '  class="toolbar-button--quiet {{modifierTemplater(\'toolbar-button--*\')}}" \n' +
-    '  ng-click="$root.ons.findParentComponentUntil(\'ons-navigator\', $event).popPage()" \n' +
+    '  ng-click="$root.ons.findParentComponentUntil(\'ons-navigator\', $event).popPage({cancelIfRunning: true})"\n' +
     '  ng-show="showBackButton"\n' +
     '  style="height: 44px; line-height: 0; padding: 0 10px 0 0; position: relative;">\n' +
     '  \n' +
@@ -5591,7 +5591,7 @@ window.ons = (function(){
         var module = angular.module(name, deps);
 
         var doc = window.document;
-        if (doc.readyState == 'loading' || doc.readyState == 'uninitialized') {
+        if (doc.readyState == 'loading' || doc.readyState == 'uninitialized' || doc.readyState == 'interactive') {
           doc.addEventListener('DOMContentLoaded', function() {
             angular.bootstrap(doc.documentElement, [name]);
           }, false);
@@ -5774,8 +5774,10 @@ window.ons = (function(){
           }
           alertDialog.html(el.html());
 
+          var parentScope;
           if (options.parentScope) {
-            ons.$compile(alertDialog)(options.parentScope.$new());
+            parentScope = options.parentScope.$new();
+            ons.$compile(alertDialog)(parentScope);
           }
           else {
             ons.compile(alertDialog[0]);
@@ -5783,6 +5785,10 @@ window.ons = (function(){
 
           if (el.attr('disabled')) {
             alertDialog.attr('disabled', 'disabled');
+          }
+
+          if (parentScope) {
+            alertDialog.data('ons-alert-dialog')._parentScope = parentScope;
           }
 
           return  alertDialog.data('ons-alert-dialog');
@@ -5820,8 +5826,10 @@ window.ons = (function(){
           }
           dialog.html(el.html());
 
+          var parentScope;
           if (options.parentScope) {
-            ons.$compile(dialog)(options.parentScope.$new());
+            parentScope = options.parentScope.$new();
+            ons.$compile(dialog)(parentScope);
           }
           else {
             ons.compile(dialog[0]);
@@ -5847,6 +5855,10 @@ window.ons = (function(){
               })(parentStyle, childStyle);
 
               child.setAttribute('style', newStyle);
+            }
+
+            if (parentScope) {
+              e.component._parentScope = parentScope;
             }
 
             deferred.resolve(e.component);
@@ -5887,8 +5899,10 @@ window.ons = (function(){
           }
           popover.html(el.html());
 
+          var parentScope;
           if (options.parentScope) {
-            ons.$compile(popover)(options.parentScope.$new());
+            parentScope = options.parentScope.$new();
+            ons.$compile(popover)(parentScope);
           }
           else {
             ons.compile(popover[0]);
@@ -5914,6 +5928,10 @@ window.ons = (function(){
               })(parentStyle, childStyle);
   
               child.setAttribute('style', newStyle);
+            }
+
+            if (parentScope) {
+              e.component._parentScope = parentScope;
             }
 
             deferred.resolve(e.component);
@@ -6077,7 +6095,12 @@ limitations under the License.
        * Destroy alert dialog.
        */
       destroy: function() {
-        this._scope.$destroy();
+        if (this._parentScope) {
+          this._parentScope.$destroy();
+          this._parentScope = null;
+        } else {
+          this._scope.$destroy();
+        }
       },
 
       _destroy: function() {
@@ -7084,7 +7107,7 @@ limitations under the License.
           if (!waitForAction) {
             this._scrollToKillOverScroll();
           }
-        } else if (this._lastDragEvent !== null) {
+        } else {
           this._startMomemtumScroll(event);
         }
         this._lastDragEvent = null;
@@ -7110,7 +7133,7 @@ limitations under the License.
       },
 
       _startMomemtumScroll: function(event) {
-        if (this._lastDragEvent !== null) {
+        if (this._lastDragEvent) {
           var velocity = this._getScrollVelocity(this._lastDragEvent);
           var duration = 0.3;
           var scrollDelta = duration * 100 * velocity;
@@ -7181,18 +7204,14 @@ limitations under the License.
        * @return {Array}
        */
       _getCarouselItemElements: function() {
-        if (this._carouselItemElements && this._carouselItemElements.length) {
-          return this._carouselItemElements;
-        }
+        var nodeList = this._element[0].querySelectorAll('ons-carousel-item'),
+          rv = [];
 
-        var nodeList = this._element[0].querySelectorAll('ons-carousel-item');
-
-        this._carouselItemElements = [];
         for (var i = nodeList.length; i--; ) {
-          this._carouselItemElements.unshift(nodeList[i]);
+          rv.unshift(nodeList[i]);
         }
 
-        return this._carouselItemElements;
+        return rv;
       },
 
       /**
@@ -7239,7 +7258,7 @@ limitations under the License.
 
       _calculateMaxScroll: function() {
         var max = this._getCarouselItemCount() * this._getCarouselItemSize() - this._getElementSize();
-        return max < 0 ? 0 : max;
+        return Math.ceil(max < 0 ? 0 : max); // Need to return an integer value.
       },
 
       _isOverScroll: function(scroll) {
@@ -7532,7 +7551,12 @@ limitations under the License.
        * Destroy dialog.
        */
       destroy: function() {
-        this._scope.$destroy();
+        if (this._parentScope) {
+          this._parentScope.$destroy();
+          this._parentScope = null;
+        } else {
+          this._scope.$destroy();
+        }
       },
 
       _destroy: function() {
@@ -8822,7 +8846,7 @@ limitations under the License.
         this._renderedElements = {};
         this._addEventListeners();
 
-        this._scope.$watch(this._onChange.bind(this));
+        this._scope.$watch(this._countItems.bind(this), this._onChange.bind(this));
 
         this._scope.$on('$destroy', this._destroy.bind(this));
         this._onChange();
@@ -8997,7 +9021,7 @@ limitations under the License.
 
         var items = [];
         for (var i = startIndex; i < cnt && topPosition < 4 * window.innerHeight; i++) {
-          var h = this._getItemHeight();
+          var h = this._getItemHeight(i);
 
           if (i >= this._itemHeightSum.length) {
             this._itemHeightSum = this._itemHeightSum.concat(new Array(100));
@@ -9575,8 +9599,8 @@ limitations under the License.
           throw new Error('options must be an object. You supplied ' + options);
         }
 
-        if (this.pages.length === 0) {
-          return this.pushPage.apply(this, arguments);
+        if (index === this.pages.length) {
+          return this.pushPage.apply(this, [].slice.call(arguments, 1));
         }
 
         this._doorLock.waitUnlock(function() {
@@ -9644,6 +9668,10 @@ limitations under the License.
         }
 
         options = options || {};
+
+        if (options.cancelIfRunning && this._isPushing) {
+          return;
+        }
 
         if (options && typeof options != 'object') {
           throw new Error('options must be an object. You supplied ' + options);
@@ -9826,9 +9854,12 @@ limitations under the License.
        */
       _emitPrePopEvent: function() {
         var isCanceled = false;
+        var leavePage = this.getCurrentPage();
         var prePopEvent = {
           navigator: this,
-          currentPage: this.getCurrentPage(),
+          currentPage: leavePage,
+          leavePage: leavePage,
+          enterPage: this.pages[this.pages.length - 2],
           cancel: function() {
             isCanceled = true;
           }
@@ -9846,6 +9877,10 @@ limitations under the License.
        */
       popPage: function(options) {
         options = options || {};
+
+        if (options.cancelIfRunning && this._isPopping) {
+          return;
+        }
 
         this._doorLock.waitUnlock(function() {
           if (this.pages.length <= 1) {
@@ -10888,7 +10923,12 @@ limitations under the License.
        * Destroy the popover and remove it from the DOM tree.
        */
       destroy: function() {
-        this._scope.$destroy();
+        if (this._parentScope) {
+          this._parentScope.$destroy();
+          this._parentScope = null;
+        } else {
+          this._scope.$destroy();
+        }
       },
 
       _destroy: function() {
@@ -12676,6 +12716,10 @@ limitations under the License.
           case 'swipeleft':
             event.gesture.preventDefault();
 
+            if (this._logic.isClosed() && !this._isInsideSwipeTargetArea(event)) {
+              return;
+            }
+
             if (this._isRightMenu) {
               this.open();
             } else {
@@ -12687,6 +12731,10 @@ limitations under the License.
 
           case 'swiperight':
             event.gesture.preventDefault();
+
+            if (this._logic.isClosed() && !this._isInsideSwipeTargetArea(event)) {
+              return;
+            }
 
             if (this._isRightMenu) {
               this.close();
@@ -13562,7 +13610,7 @@ limitations under the License.
         var previousTabItem = this._tabItems[this.getActiveTabIndex()];
         var selectedTabItem = this._tabItems[index];
 
-        if((typeof selectedTabItem.noReload !== 'undefined' || typeof selectedTabItem.isPersistent()) &&
+        if ((typeof selectedTabItem.noReload !== 'undefined' || selectedTabItem.isPersistent()) &&
             index === this.getActiveTabIndex()) {
           this.emit('reactive', {
             index: index,
@@ -21086,6 +21134,10 @@ limitations under the License.
             }
 
             container[names[names.length - 1]] = object;
+
+            if (container[names[names.length -1]] !== object) {
+              throw new Error('Cannot set var="' + object._attrs.var + '" because it will overwrite a read-only variable.');
+            }
           }
 
           if (ons.componentBase) {

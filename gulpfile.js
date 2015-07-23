@@ -27,7 +27,7 @@ gulp.task('update-onsenui', function(done) {
       gulp.src('temp/onsenui/build/js/ons*.js')
         .pipe(gulp.dest('base/www/lib/onsen/js/'))
         .on('end', function() {
-          gulp.src('temp/onsenui/build/js/angular/**/*')
+          gulp.src('temp/angular/**/*')
             .pipe(gulp.dest('base/www/lib/angular/'))
             .on('end', function() {
               gulp.src('temp/onsenui/build/{css,stylus}/**/*')
