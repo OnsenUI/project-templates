@@ -24,13 +24,13 @@ gulp.task('update-onsenui', function(done) {
   bower.commands
     .install(['onsenui'], {}, {directory: 'temp'})
     .on('end', function(installed) {
-      gulp.src('temp/{onsenui,OnsenUI}/build/js/ons*.js')
+      gulp.src('temp/OnsenUI/build/js/ons*.js')
         .pipe(gulp.dest('base/www/lib/onsen/js/'))
         .on('end', function() {
           gulp.src('temp/angular/**/*')
             .pipe(gulp.dest('base/www/lib/angular/'))
             .on('end', function() {
-              gulp.src('temp/{onsenui,OnsenUI}/build/{css,stylus}/**/*')
+              gulp.src('temp/OnsenUI/build/{css,stylus}/**/*')
                 .pipe(gulp.dest('base/www/lib/onsen/'))
                 .on('end', function() {
                   del(['temp'], done);
