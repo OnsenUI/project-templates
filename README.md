@@ -6,6 +6,7 @@ Onsen UI project templates for Cordova and Visual Studio 2015.
 
 ```
 $ npm install gulp -g
+$ npm install
 $ gulp build [--vsix <version>]
 
 // Only Cordova templates
