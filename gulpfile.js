@@ -6,6 +6,7 @@ var browserSync = require('browser-sync');
 var argv = require('yargs').argv;
 var del = require('del');
 var bower = require('bower');
+var path = require('path')
 
 var names = [
   'master-detail',
@@ -17,9 +18,9 @@ var names = [
 var isJSTemplateFile = function(file) {
   return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
 }, isIndexHtml = function(file) {
-  return file.path.split('/').pop() === 'index.html';
+  return file.path.split(path.sep).pop() === 'index.html';
 }, isBundleFile = function(file) {
-  return file.path.split('/').pop().match(/\w+_all\..+/);
+  return file.path.split(path.sep).pop().match(/\w+_all\..+/);
 };
 
 // VSIX file versioning
@@ -97,8 +98,8 @@ gulp.task('prepare-VS2015', function(done) {
       .pipe(gulp.dest('VS2015/gen/'))
       // TypeScript templates
       .pipe($.ignore.exclude(isJSTemplateFile)) // Ignore files for JS Templates
-      .pipe($.rename(function(path) { // Modify the path
-        path.dirname = path.dirname.replace(/^([\w,-]+)/, '$1-TS');
+      .pipe($.rename(function(filePath) { // Modify the path
+        filePath.dirname = filePath.dirname.replace(/^([\w,-]+)/, '$1-TS');
       }))
       .pipe($.if(isIndexHtml, $.replace('platformOverrides.js', 'appBundle.js'))) // Some necessary modifications to index.html
       .pipe($.if(isIndexHtml, $.replace(/\n\s+.+scripts\/index.js.+\n/, '\n'))) // Delete one line
@@ -106,8 +107,8 @@ gulp.task('prepare-VS2015', function(done) {
       .on('end', function() {
         // More TS specific stuff
         gulp.src(['VS2015/templates/*/TS/*'])
-          .pipe($.rename(function(path) {
-            path.dirname = path.dirname.replace(/\/TS/, '-TS');
+          .pipe($.rename(function(filePath) {
+            filePath.dirname = filePath.dirname.replace(path.sep + 'TS', '-TS');
           }))
           .pipe(gulp.dest('VS2015/gen/'))
           .on('end', done);
@@ -237,7 +238,7 @@ gulp.task('compress', function(done) {
 ///////////////
 gulp.task('generate-vsix', ['compress-VS2015'], function(done) {
   var isVSIXManifest = function(file) {
-    return file.path.split('/').pop() === 'extension.vsixmanifest';
+    return file.path.split(path.sep).pop() === 'extension.vsixmanifest';
   };
 
   gulp.src(['VS2015/base/VSIX/**/*'])
