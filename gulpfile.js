@@ -116,6 +116,24 @@ gulp.task('prepare-VS2015', function(done) {
 });
 
 ///////////////
+// prepare-MFP
+///////////////
+gulp.task('prepare-MFP', function(done) {
+  var stream = gulp.src(['base/**/*', '!base/node_modules/**/*', '!base/node_modules/', '!base/scripts/**/*', '!base/scripts/', '!base/config.xml', 'MFP/base/**/*'], {dot: true});
+
+  names.forEach(function(name) {
+    stream = stream.pipe(gulp.dest('MFP/gen/' + name));
+  });
+
+  stream.on('end', function() {
+    gulp.src(['templates/**/*'])
+      .pipe($.replace(/(\n)(\<\/head\>)/, '\n\t\<script src=\"js\/mfp\.js\"\>\<\/script\>\n\n$2')) // Some necessary modifications to index.html
+      .pipe(gulp.dest('MFP/gen/'))
+      .on('end', done);
+  });
+});
+
+///////////////
 // prepare
 ///////////////
 gulp.task('prepare', function(done) {
@@ -229,7 +247,7 @@ gulp.task('serve', ['prepare-cordova', 'prepare-VS2015', 'browser-sync'], functi
 // build
 ///////////////
 gulp.task('build', function(done) {
-  runSequence('clean', 'update-onsenui', 'compress-cordova', 'generate-vsix', done);
+  runSequence('clean', 'update-onsenui', 'compress-cordova', 'generate-vsix', 'prepare-MFP', done);
 });
 
 gulp.task('build-cordova', function(done) {
@@ -240,6 +258,9 @@ gulp.task('build-VS2015', function(done) {
   runSequence('clean', 'update-onsenui', 'generate-vsix', done);
 });
 
+gulp.task('build-MFP', function(done) {
+  runSequence('clean', 'update-onsenui', 'prepare-MFP', done);
+});
 ///////////////
 // clean
 ///////////////

@@ -13,5 +13,7 @@ $ gulp build [--vsix <version>]
 $ gulp build-cordova
 // Only VS2015 templates
 $ gulp build-VS2015 [--vsix <version>]
+// Only MobileFirst Platform templates
+$ gulp build-MFP
 
 ```
