@@ -20,6 +20,7 @@
     "gulp-shell": "^0.4.0",
     "gulp-stylus": "^2.0.1",
     "gulp-task-listing": "^1.0.0",
+    "gulp-typescript": "^2.9.2",
     "jshint-stylish": "^1.0.1",
     "run-sequence": "^1.0.2"
   }

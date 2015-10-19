@@ -52,6 +52,16 @@ gulp.task('jshint', function() {
 });
 
 ////////////////////
+// typescript
+////////////////////
+gulp.task('typescript', function() {
+  var proj = ts.createProject("scripts/tsconfig.json");
+  var result = gulp.src("scripts/**/*.ts").pipe(ts(proj));
+
+  return result.js.pipe(gulp.dest("www/scripts"));
+});
+
+////////////////////
 // serve
 ////////////////////
 gulp.task('serve', ['build', 'browser-sync'], function() {

@@ -14,6 +14,14 @@ var names = [
   'split-view'
 ];
 
+var isJSTemplateFile = function(file) {
+  return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
+}, isIndexHtml = function(file) {
+  return file.path.split('/').pop() === 'index.html';
+}, isBundleFile = function(file) {
+  return file.path.split('/').pop().match(/\w+_all\..+/);
+};
+
 // VSIX file versioning
 var vsixVersion = argv.vsix ? argv.vsix : '1.0.0';
 
@@ -61,14 +69,6 @@ gulp.task('prepare-cordova', function(done) {
 // prepare-VS2015
 ///////////////
 gulp.task('prepare-VS2015', function(done) {
-  var isJSTemplateFile = function(file) {
-    return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
-  }, isIndexHtml = function(file) {
-    return file.path.split('/').pop() === 'index.html';
-  }, isBundleFile = function(file) {
-    return file.path.split('/').pop().match(/\w+_all\..+/);
-  };
-
   var streamBase = gulp.src(['VS2015/base/**/*', '!VS2015/base/VSIX/**/*', '!VS2015/base/VSIX/'], {dot: true, base: 'VS2015/base'});
   var streamBaseJS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/lib/onsen/stylus/**/*', '!base/www/lib/onsen/stylus/'], {dot: true, base: 'base'})
       .pipe($.ignore.exclude(isBundleFile)); // Ignore heavy bundle libraries;
@@ -129,6 +129,40 @@ gulp.task('prepare-MFP', function(done) {
     gulp.src(['templates/**/*'])
       .pipe($.replace(/(\n)(\<\/head\>)/, '\n\t\<script src=\"js\/mfp\.js\"\>\<\/script\>\n\n$2')) // Some necessary modifications to index.html
       .pipe(gulp.dest('MFP/gen/'))
+      .on('end', done);
+  });
+});
+
+///////////////
+// prepare-TACO
+///////////////
+gulp.task('prepare-TACO', function(done) {
+  var streamBase = gulp.src(['base/**/*', '!base/node_modules/**/*', '!base/node_modules/', '!base/scripts/**/*', '!base/scripts/', '!base/www/scripts/**/*', '!base/www/scripts', '!base/config.xml', 'TACO/base/**/*'], {dot: true});
+  var streamBaseJS = gulp.src(['base/www/scripts/**/*'], {dot: true});
+  var streamBaseTS = gulp.src(['base/scripts/**/*'], {dot: true});
+
+  var streams = names.map(function(name) {
+    streamBase = streamBase
+      .pipe(gulp.dest('TACO/gen/' + name))
+      .pipe(gulp.dest('TACO/gen/typescript/' + name));
+
+    streamBaseJS = streamBaseJS.pipe(gulp.dest('TACO/gen/' + name + '/www/scripts/'));
+    streamBaseTS = streamBaseTS.pipe(gulp.dest('TACO/gen/typescript/' + name + '/scripts/'));
+
+    return [streamBase, streamBaseJS, streamBaseTS];
+  });
+
+  streams = streams.reduce(function(a, b) {
+    return a.concat(b);
+  });
+
+  merge(streams).on('end', function() {
+    gulp.src(['templates/**/*'])
+      // JavaScript templates
+      .pipe(gulp.dest('TACO/gen/'))
+      // TypeScript templates
+      .pipe($.if(isIndexHtml, $.replace(/\n\s+.+scripts\/platformOverrides.js.+\n/, '\n'))) // Delete one line
+      .pipe(gulp.dest('TACO/gen/typescript/'))
       .on('end', done);
   });
 });
@@ -247,7 +281,7 @@ gulp.task('serve', ['prepare-cordova', 'prepare-VS2015', 'browser-sync'], functi
 // build
 ///////////////
 gulp.task('build', function(done) {
-  runSequence('clean', 'update-onsenui', 'compress-cordova', 'generate-vsix', 'prepare-MFP', done);
+  runSequence('clean', 'update-onsenui', 'compress-cordova', 'generate-vsix', 'prepare-MFP', 'prepare-TACO', done);
 });
 
 gulp.task('build-cordova', function(done) {
@@ -260,6 +294,10 @@ gulp.task('build-VS2015', function(done) {
 
 gulp.task('build-MFP', function(done) {
   runSequence('clean', 'update-onsenui', 'prepare-MFP', done);
+});
+
+gulp.task('build-TACO', function(done) {
+  runSequence('clean', 'update-onsenui', 'prepare-TACO', done);
 });
 ///////////////
 // clean

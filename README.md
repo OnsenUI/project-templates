@@ -15,5 +15,8 @@ $ gulp build-cordova
 $ gulp build-VS2015 [--vsix <version>]
 // Only MobileFirst Platform templates
 $ gulp build-MFP
+// Only TACO templates
+$ gulp build-TACO
+
 
 ```
