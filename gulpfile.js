@@ -6,6 +6,7 @@ var browserSync = require('browser-sync');
 var argv = require('yargs').argv;
 var del = require('del');
 var bower = require('bower');
+var path = require('path')
 
 var names = [
   'master-detail',
@@ -13,6 +14,14 @@ var names = [
   'tab-bar',
   'split-view'
 ];
+
+var isJSTemplateFile = function(file) {
+  return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
+}, isIndexHtml = function(file) {
+  return file.path.split(path.sep).pop() === 'index.html';
+}, isBundleFile = function(file) {
+  return file.path.split(path.sep).pop().match(/\w+_all\..+/);
+};
 
 // VSIX file versioning
 var vsixVersion = argv.vsix ? argv.vsix : '1.0.0';
@@ -61,14 +70,6 @@ gulp.task('prepare-cordova', function(done) {
 // prepare-VS2015
 ///////////////
 gulp.task('prepare-VS2015', function(done) {
-  var isJSTemplateFile = function(file) {
-    return (['vstemplate', 'jsproj'].indexOf(file.path.split('.').pop()) >= 0);
-  }, isIndexHtml = function(file) {
-    return file.path.split('/').pop() === 'index.html';
-  }, isBundleFile = function(file) {
-    return file.path.split('/').pop().match(/\w+_all\..+/);
-  };
-
   var streamBase = gulp.src(['VS2015/base/**/*', '!VS2015/base/VSIX/**/*', '!VS2015/base/VSIX/'], {dot: true, base: 'VS2015/base'});
   var streamBaseJS = gulp.src(['base/merges/**/*', 'base/www/**/*', '!base/www/lib/onsen/stylus/**/*', '!base/www/lib/onsen/stylus/'], {dot: true, base: 'base'})
       .pipe($.ignore.exclude(isBundleFile)); // Ignore heavy bundle libraries;
@@ -97,8 +98,8 @@ gulp.task('prepare-VS2015', function(done) {
       .pipe(gulp.dest('VS2015/gen/'))
       // TypeScript templates
       .pipe($.ignore.exclude(isJSTemplateFile)) // Ignore files for JS Templates
-      .pipe($.rename(function(path) { // Modify the path
-        path.dirname = path.dirname.replace(/^([\w,-]+)/, '$1-TS');
+      .pipe($.rename(function(filePath) { // Modify the path
+        filePath.dirname = filePath.dirname.replace(/^([\w,-]+)/, '$1-TS');
       }))
       .pipe($.if(isIndexHtml, $.replace('platformOverrides.js', 'appBundle.js'))) // Some necessary modifications to index.html
       .pipe($.if(isIndexHtml, $.replace(/\n\s+.+scripts\/index.js.+\n/, '\n'))) // Delete one line
@@ -106,12 +107,64 @@ gulp.task('prepare-VS2015', function(done) {
       .on('end', function() {
         // More TS specific stuff
         gulp.src(['VS2015/templates/*/TS/*'])
-          .pipe($.rename(function(path) {
-            path.dirname = path.dirname.replace(/\/TS/, '-TS');
+          .pipe($.rename(function(filePath) {
+            filePath.dirname = filePath.dirname.replace(path.sep + 'TS', '-TS');
           }))
           .pipe(gulp.dest('VS2015/gen/'))
           .on('end', done);
       });
+  });
+});
+
+///////////////
+// prepare-MFP
+///////////////
+gulp.task('prepare-MFP', function(done) {
+  var stream = gulp.src(['base/**/*', '!base/node_modules/**/*', '!base/node_modules/', '!base/scripts/**/*', '!base/scripts/', '!base/config.xml', 'MFP/base/**/*'], {dot: true});
+
+  names.forEach(function(name) {
+    stream = stream.pipe(gulp.dest('MFP/gen/' + name));
+  });
+
+  stream.on('end', function() {
+    gulp.src(['templates/**/*'])
+      .pipe($.replace(/(\n)(\<\/head\>)/, '\n\t\<script src=\"js\/mfp\.js\"\>\<\/script\>\n\n$2')) // Some necessary modifications to index.html
+      .pipe(gulp.dest('MFP/gen/'))
+      .on('end', done);
+  });
+});
+
+///////////////
+// prepare-TACO
+///////////////
+gulp.task('prepare-TACO', function(done) {
+  var streamBase = gulp.src(['base/**/*', '!base/node_modules/**/*', '!base/node_modules/', '!base/scripts/**/*', '!base/scripts/', '!base/www/scripts/**/*', '!base/www/scripts', '!base/config.xml', 'TACO/base/**/*'], {dot: true});
+  var streamBaseJS = gulp.src(['base/www/scripts/**/*'], {dot: true});
+  var streamBaseTS = gulp.src(['base/scripts/**/*'], {dot: true});
+
+  var streams = names.map(function(name) {
+    streamBase = streamBase
+      .pipe(gulp.dest('TACO/gen/' + name))
+      .pipe(gulp.dest('TACO/gen/typescript/' + name));
+
+    streamBaseJS = streamBaseJS.pipe(gulp.dest('TACO/gen/' + name + '/www/scripts/'));
+    streamBaseTS = streamBaseTS.pipe(gulp.dest('TACO/gen/typescript/' + name + '/scripts/'));
+
+    return [streamBase, streamBaseJS, streamBaseTS];
+  });
+
+  streams = streams.reduce(function(a, b) {
+    return a.concat(b);
+  });
+
+  merge(streams).on('end', function() {
+    gulp.src(['templates/**/*'])
+      // JavaScript templates
+      .pipe(gulp.dest('TACO/gen/'))
+      // TypeScript templates
+      .pipe($.if(isIndexHtml, $.replace(/\n\s+.+scripts\/platformOverrides.js.+\n/, '\n'))) // Delete one line
+      .pipe(gulp.dest('TACO/gen/typescript/'))
+      .on('end', done);
   });
 });
 
@@ -185,7 +238,7 @@ gulp.task('compress', function(done) {
 ///////////////
 gulp.task('generate-vsix', ['compress-VS2015'], function(done) {
   var isVSIXManifest = function(file) {
-    return file.path.split('/').pop() === 'extension.vsixmanifest';
+    return file.path.split(path.sep).pop() === 'extension.vsixmanifest';
   };
 
   gulp.src(['VS2015/base/VSIX/**/*'])
@@ -229,7 +282,7 @@ gulp.task('serve', ['prepare-cordova', 'prepare-VS2015', 'browser-sync'], functi
 // build
 ///////////////
 gulp.task('build', function(done) {
-  runSequence('clean', 'update-onsenui', 'compress-cordova', 'generate-vsix', done);
+  runSequence('clean', 'update-onsenui', 'compress-cordova', 'generate-vsix', 'prepare-MFP', 'prepare-TACO', done);
 });
 
 gulp.task('build-cordova', function(done) {
@@ -240,6 +293,13 @@ gulp.task('build-VS2015', function(done) {
   runSequence('clean', 'update-onsenui', 'generate-vsix', done);
 });
 
+gulp.task('build-MFP', function(done) {
+  runSequence('clean', 'update-onsenui', 'prepare-MFP', done);
+});
+
+gulp.task('build-TACO', function(done) {
+  runSequence('clean', 'update-onsenui', 'prepare-TACO', done);
+});
 ///////////////
 // clean
 ///////////////
