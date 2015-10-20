@@ -9,6 +9,7 @@ var bower = require('bower');
 var path = require('path')
 
 var names = [
+  'blank',
   'master-detail',
   'sliding-menu',
   'tab-bar',
