@@ -13,7 +13,8 @@ var names = [
   'master-detail',
   'sliding-menu',
   'tab-bar',
-  'split-view'
+  'split-view',
+  'splitter'
 ];
 
 var isJSTemplateFile = function(file) {

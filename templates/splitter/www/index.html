@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- JS dependencies (order matters!) -->
+  <script src="scripts/platformOverrides.js"></script>
+  <script src="lib/onsen/js/onsenui.js"></script>
+  <script src="lib/angular/angular.js"></script>
+  <script src="lib/onsen/js/angular-onsenui.js"></script>
+
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="lib/onsen/css/onsenui.css" />
+  <link rel="stylesheet" href="lib/onsen/css/onsen-css-components-blue-basic-theme.css" />
+
+  <!-- CSP support mode (required for Windows Universal apps) -->
+  <link rel="stylesheet" href="lib/angular/angular-csp.css" />
+
+  <title>Onsen UI Splitter</title>
+
+  <style>
+    .page__background {
+      background-color: #F0EFF4;
+    }
+
+    .list {
+      margin-top: 30px;
+    }
+
+    ons-splitter-side[side="left"] {
+      border-right: 1px solid #ddd;
+    }
+
+    .settings-icon {
+      display: block;
+      float: left;
+      font-size: 20px;
+      height: 28px;
+      line-height: 29px;
+      padding: 0;
+      margin: 8px 10px 8px 6px;
+      color: #fff;
+      text-align: center;
+      background-color: red;
+      border-radius: 4px;
+      width: 26px;
+    }
+
+    .settings-icon-general {
+      background-color: #919297;
+    }
+
+    .settings-icon-sound {
+      background-color: #FF2C55;
+    }
+
+    .settings-icon-graphics {
+      background-color: #4CD85D;
+    }
+
+    .settings-icon-facebook {
+      background-color: #3B5998;
+    }
+
+    .settings-icon-about {
+      background-color: #919297;
+    }
+
+    .settings-icon-twitter {
+      background-color: #2DAAE1;
+    }
+  </style>
+
+  <script>
+    angular.module('myApp', ['onsen']);
+  </script>
+</head>
+<body>
+  <ons-splitter var="splitter">
+    <ons-splitter-side width="300px" side="left" collapse="portrait" swipeable>
+      <ons-page>
+        <ons-toolbar>
+          <div class="center">Settings</div>
+        </ons-toolbar>
+
+        <ons-list>
+          <ons-list-item modifier="chevron" ng-click="splitter.loadContentPage('general.html'); splitter.closeLeft();">
+            <ons-icon icon="ion-ios-cog-outline" class="settings-icon settings-icon-general"></ons-icon> General
+          </ons-list-item>
+          <ons-list-item modifier="chevron" ng-click="splitter.loadContentPage('sound.html'); splitter.closeLeft();">
+            <ons-icon icon="ion-ios-volume-high" class="settings-icon settings-icon-sound"></ons-icon> Sound
+          </ons-list-item>
+          <ons-list-item modifier="chevron">
+            <ons-icon icon="ion-ios-cog" class="settings-icon settings-icon-graphics"></ons-icon> Graphics
+          </ons-list-item>
+        </ons-list>
+
+        <ons-list>
+          <ons-list-item modifier="chevron">
+            <ons-icon icon="ion-social-facebook" class="settings-icon settings-icon-facebook"></ons-icon> Facebook
+          </ons-list-item>
+          <ons-list-item modifier="chevron">
+            <ons-icon icon="ion-social-twitter" class="settings-icon settings-icon-twitter"></ons-icon> Twitter
+          </ons-list-item>
+        </ons-list>
+
+        <ons-list>
+          <ons-list-item modifier="chevron">
+            <ons-icon icon="ion-ios-information-outline" class="settings-icon settings-icon-about"></ons-icon> About
+          </ons-list-item>
+        </ons-list>
+      </ons-page>
+    </ons-splitter-side>
+
+    <ons-splitter-content page="general.html"></ons-splitter-content>
+  </ons-splitter>
+
+  <ons-template id="general.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button ng-show="ons.orientation.isPortrait()" ng-click="splitter.openLeft()">
+            <i class="ion-navicon" style="font-size:32px; vertical-align:-6px;"></i>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">General</div>
+      </ons-toolbar>
+
+      <ons-list>
+        <ons-list-item>
+          Push notifications <ons-switch modifier="list-item" checked></ons-switch>
+        </ons-list-item>
+      </ons-list>
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="sound.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button ng-show="ons.orientation.isPortrait()" ng-click="splitter.openLeft()">
+            <i class="ion-navicon" style="font-size:32px; vertical-align:-6px;"></i>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">Sound</div>
+      </ons-toolbar>
+
+      <ons-list>
+        <ons-list-item>
+          Enable sound <ons-switch modifier="list-item" checked></ons-switch>
+        </ons-list-item>
+        <ons-list-item>
+          Enable music <ons-switch modifier="list-item"></ons-switch>
+        </ons-list-item>
+      </ons-list>
+    </ons-page>
+  </ons-template>
+
+</body>
+</html>
