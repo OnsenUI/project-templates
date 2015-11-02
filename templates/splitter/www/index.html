@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- CSP support mode (required for Windows Universal apps): https://docs.angularjs.org/api/ng/directive/ngCsp -->
 <html lang="en" ng-app="myApp">
 <head>
   <meta charset="utf-8" />
@@ -76,8 +77,15 @@
   <script>
     angular.module('myApp', ['onsen']);
   </script>
+
 </head>
+
 <body>
+  <!-- Cordova reference -->
+  <script src="cordova.js"></script>
+  <script src="scripts/index.js"></script>
+  <!-- -->
+
   <ons-splitter var="splitter">
     <ons-splitter-side width="300px" side="left" collapse="portrait" swipeable>
       <ons-page>
