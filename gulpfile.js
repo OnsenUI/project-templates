@@ -13,7 +13,8 @@ var names = [
   'master-detail',
   'sliding-menu',
   'tab-bar',
-  'split-view'
+  'split-view',
+  'splitter'
 ];
 
 var isJSTemplateFile = function(file) {
@@ -32,15 +33,15 @@ var vsixVersion = argv.vsix ? argv.vsix : '1.0.0';
 ///////////////
 gulp.task('update-onsenui', function(done) {
   bower.commands
-    .install(['onsenui'], {}, {directory: 'temp'})
+    .install(['onsenui#2.0.0-alpha.9'], {}, {directory: 'temp'})
     .on('end', function(installed) {
-      gulp.src('temp/OnsenUI/js/*.js')
+      gulp.src('temp/onsenui/js/*.js')
         .pipe(gulp.dest('base/www/lib/onsen/js/'))
         .on('end', function() {
           gulp.src('temp/angular/**/*')
             .pipe(gulp.dest('base/www/lib/angular/'))
             .on('end', function() {
-              gulp.src('temp/OnsenUI/{css,stylus}/**/*')
+              gulp.src('temp/onsenui/{css,stylus}/**/*')
                 .pipe(gulp.dest('base/www/lib/onsen/'))
                 .on('end', function() {
                   del(['temp'], done);
