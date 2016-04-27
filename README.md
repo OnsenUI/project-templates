@@ -7,7 +7,7 @@ Onsen UI project templates for Cordova and Visual Studio 2015.
 ```
 $ npm install gulp -g
 $ npm install
-$ gulp build [--vsix <version>]
+$ gulp build [--vsix <version>] [--onsver <Onsen UI version>]
 
 // Only Cordova templates
 $ gulp build-cordova
@@ -17,6 +17,7 @@ $ gulp build-VS2015 [--vsix <version>]
 $ gulp build-MFP
 // Only TACO templates
 $ gulp build-TACO
-
+// Only Monaca templates
+$ gulp build-Monaca
 
 ```

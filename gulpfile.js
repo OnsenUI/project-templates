@@ -10,10 +10,9 @@ var path = require('path')
 
 var names = [
   'blank',
-  'master-detail',
-  'sliding-menu',
-  'tab-bar',
-  'split-view'
+  'navigation',
+  'tabbar',
+  'splitter'
 ];
 
 var isJSTemplateFile = function(file) {
@@ -26,13 +25,14 @@ var isJSTemplateFile = function(file) {
 
 // VSIX file versioning
 var vsixVersion = argv.vsix ? argv.vsix : '1.0.0';
+var onsenVersion = argv.onsver ? argv.onsver : null;
 
 ///////////////
 // update-onsenui
 ///////////////
 gulp.task('update-onsenui', function(done) {
   bower.commands
-    .install(['onsenui'], {}, {directory: 'temp'})
+    .install(['onsenui'], { version: onsenVersion }, {directory: 'temp'})
     .on('end', function(installed) {
       gulp.src('temp/OnsenUI/js/*.js')
         .pipe(gulp.dest('base/www/lib/onsen/js/'))
@@ -131,6 +131,24 @@ gulp.task('prepare-MFP', function(done) {
     gulp.src(['templates/**/*'])
       .pipe($.replace(/(\n)(\<\/head\>)/, '\n\t\<script src=\"js\/mfp\.js\"\>\<\/script\>\n\n$2')) // Some necessary modifications to index.html
       .pipe(gulp.dest('MFP/gen/'))
+      .on('end', done);
+  });
+});
+
+/////////////////
+// prepare-Monaca
+/////////////////
+gulp.task('prepare-monaca', function(done) {
+  var stream = gulp.src(['base/@(www)/**/*', 'Monaca/base/**/*'], {dot: true});
+
+  names.forEach(function(name) {
+    stream = stream.pipe(gulp.dest('Monaca/gen/' + name));
+  });
+
+  stream.on('end', function() {
+    gulp.src(['templates/**/*'])
+      .pipe($.replace(/(\n)(\<\/head\>)/, '\n\t\<script src=\"js\/mfp\.js\"\>\<\/script\>\n\n$2')) // Some necessary modifications to index.html
+      .pipe(gulp.dest('Monaca/gen/'))
       .on('end', done);
   });
 });
@@ -288,6 +306,10 @@ gulp.task('build', function(done) {
 
 gulp.task('build-cordova', function(done) {
   runSequence('clean', 'update-onsenui', 'compress-cordova', done);
+});
+
+gulp.task('build-Monaca', function(done) {
+  runSequence('clean', 'update-onsenui', 'prepare-monaca', done);
 });
 
 gulp.task('build-VS2015', function(done) {
