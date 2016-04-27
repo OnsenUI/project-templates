@@ -25,14 +25,14 @@ var isJSTemplateFile = function(file) {
 
 // VSIX file versioning
 var vsixVersion = argv.vsix ? argv.vsix : '1.0.0';
-var onsenVersion = argv.onsver ? argv.onsver : null;
+var onsenVersion = argv.onsver ? 'onsenui#' + argv.onsver : 'onsenui';
 
 ///////////////
 // update-onsenui
 ///////////////
 gulp.task('update-onsenui', function(done) {
   bower.commands
-    .install(['onsenui'], { version: onsenVersion }, {directory: 'temp'})
+    .install([onsenVersion], { }, {directory: 'temp'})
     .on('end', function(installed) {
       gulp.src('temp/OnsenUI/js/*.js')
         .pipe(gulp.dest('base/www/lib/onsen/js/'))
