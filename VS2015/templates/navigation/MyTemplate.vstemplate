@@ -36,17 +36,7 @@
       </Folder>
       <Folder Name="www" TargetFolderName="www">
         <Folder Name="images" TargetFolderName="images" />
-        <Folder Name="js" TargetFolderName="js">
-          <ProjectItem ReplaceParameters="true" TargetFileName="app.js">app.js</ProjectItem>
-        </Folder>
         <Folder Name="lib" TargetFolderName="lib">
-          <Folder Name="angular" TargetFolderName="angular">
-            <ProjectItem ReplaceParameters="true" TargetFileName="angular.js">angular.js</ProjectItem>
-            <ProjectItem ReplaceParameters="true" TargetFileName="angular.min.js">angular.min.js</ProjectItem>
-            <ProjectItem ReplaceParameters="false" TargetFileName="angular.min.js.gzip">angular.min.js.gzip</ProjectItem>
-            <ProjectItem ReplaceParameters="true" TargetFileName="angular.min.js.map">angular.min.js.map</ProjectItem>
-            <ProjectItem ReplaceParameters="true" TargetFileName="angular-csp.css">angular-csp.css</ProjectItem>
-          </Folder>
           <Folder Name="onsen" TargetFolderName="onsen">
             <Folder Name="css" TargetFolderName="css">
               <Folder Name="font_awesome" TargetFolderName="font_awesome">
@@ -60,6 +50,7 @@
                   <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.svg">fontawesome-webfont.svg</ProjectItem>
                   <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.ttf">fontawesome-webfont.ttf</ProjectItem>
                   <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.woff">fontawesome-webfont.woff</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="fontawesome-webfont.woff2">fontawesome-webfont.woff2</ProjectItem>
                 </Folder>
               </Folder>
               <Folder Name="ionicons" TargetFolderName="ionicons">
@@ -72,6 +63,19 @@
                   <ProjectItem ReplaceParameters="false" TargetFileName="ionicons.svg">ionicons.svg</ProjectItem>
                   <ProjectItem ReplaceParameters="false" TargetFileName="ionicons.ttf">ionicons.ttf</ProjectItem>
                   <ProjectItem ReplaceParameters="false" TargetFileName="ionicons.woff">ionicons.woff</ProjectItem>
+                </Folder>
+              </Folder>
+              <Folder Name="material-design-iconic-font" TargetFolderName="material-design-iconic-font">
+                <Folder Name="css" TargetFolderName="css">
+                  <ProjectItem ReplaceParameters="true" TargetFileName="material-design-iconic-font.css">material-design-iconic-font.css</ProjectItem>
+                  <ProjectItem ReplaceParameters="true" TargetFileName="material-design-iconic-font.min.css">material-design-iconic-font.min.css</ProjectItem>
+                </Folder>
+                <Folder Name="fonts" TargetFolderName="fonts">
+                  <ProjectItem ReplaceParameters="false" TargetFileName="Material-Design-Iconic-Font.eot">Material-Design-Iconic-Font.eot</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="Material-Design-Iconic-Font.svg">Material-Design-Iconic-Font.svg</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="Material-Design-Iconic-Font.ttf">Material-Design-Iconic-Font.ttf</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="Material-Design-Iconic-Font.woff">Material-Design-Iconic-Font.woff</ProjectItem>
+                  <ProjectItem ReplaceParameters="false" TargetFileName="Material-Design-Iconic-Font.woff2">Material-Design-Iconic-Font.woff2</ProjectItem>
                 </Folder>
               </Folder>
               <ProjectItem ReplaceParameters="true" TargetFileName="onsen-css-components.css">onsen-css-components.css</ProjectItem>
