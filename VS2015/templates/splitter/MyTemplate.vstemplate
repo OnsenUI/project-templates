@@ -1,13 +1,13 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>Onsen UI Sliding Menu</Name>
-    <Description>Onsen UI Sliding Menu template for Cordova apps in Visual Studio 2015.</Description>
+    <Name>Onsen UI Splitter</Name>
+    <Description>Onsen UI Splitter template for Cordova apps in Visual Studio 2015.</Description>
     <ProjectType>JavaScript</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>Onsen UI Sliding Menu</DefaultName>
+    <DefaultName>Onsen UI Splitter</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
@@ -17,7 +17,7 @@
     <CreateInPlace>true</CreateInPlace>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="Onsen UI Sliding Menu.jsproj" File="Onsen UI Sliding Menu.jsproj" ReplaceParameters="true">
+    <Project TargetFileName="Onsen UI Splitter.jsproj" File="Onsen UI Splitter.jsproj" ReplaceParameters="true">
       <Folder Name="merges" TargetFolderName="merges">
         <Folder Name="android" TargetFolderName="android">
           <Folder Name="scripts" TargetFolderName="scripts">

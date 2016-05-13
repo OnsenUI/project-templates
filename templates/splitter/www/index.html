@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- JS dependencies (order matters!) -->
+  <script src="scripts/platformOverrides.js"></script>
+  <script src="lib/onsen/js/onsenui.js"></script>
+
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="lib/onsen/css/onsenui.css" />
+  <link rel="stylesheet" href="lib/onsen/css/onsen-css-components-blue-basic-theme.css" />
+
+  <title>Onsen UI</title>
+
+  <!-- App init -->
+
+  <script>
+    function openMenu() {
+      document.getElementById('mySplitter').left.open();
+    }
+
+    function loadPage(page) {
+      var splitter = document.getElementById('mySplitter');
+      splitter.content.load(page).then(function() {
+        splitter.left.close();
+      });
+    }
+  </script>
+
+  <style>
+    ons-splitter-side .page__background {
+      background-color: #333;
+    }
+    .menu-list,
+    .menu-item {
+      background-color: transparent;
+      background-image: none !important;
+      border-color: transparent;
+      color: #fff;
+      box-shadow: none !important;
+    }
+    .menu-list {
+      margin-top: 25px;
+    }
+    .menu-notification {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 14px;
+      height: 16px;
+      line-height: 16px;
+      min-width: 16px;
+      font-weight: 600;
+      margin-left: -3px;
+    }
+    .bottom-menu-list,
+    .bottom-menu-item:first-child,
+    .bottom-menu-item:last-child,
+    .bottom-menu-item {
+      border-color: #393939;
+      background-color: transparent;
+      background-image: none !important;
+      color: #ccc;
+      box-shadow: none !important;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!-- Cordova reference -->
+  <script src="cordova.js"></script>
+  <script src="scripts/index.js"></script>
+  <!-- -->
+
+  <ons-splitter id="mySplitter">
+    <ons-splitter-side side="left" width="220px" collapse swipeable>
+      <ons-page>
+        <ons-list class="menu-list">
+          <ons-list-item class="longdivider menu-item" tappable tap-background-color="#555" onclick="loadPage('home.html')">
+            <div class="left">
+              <ons-icon icon="fa-plus"></ons-icon>
+            </div>
+            New Post
+          </ons-list-item>
+          <ons-list-item class="longdivider menu-item" tappable tap-background-color="#555" onclick="loadPage('another-page.html')">
+            <div class="left">
+              <ons-icon icon="fa-bookmark"></ons-icon>
+            </div>
+            Bookmark
+          </ons-list-item>
+          <ons-list-item class="longdivider menu-item" tappable tap-background-color="#555" onclick="loadPage('another-page.html')">
+            <div class="left">
+              <ons-icon icon="fa-twitter"></ons-icon>
+            </div>
+            Official Twitter
+          </ons-list-item>
+        </ons-list>
+
+        <br>
+
+        <ons-list class="bottom-menu-list">
+          <ons-list-item class="longdivider bottom-menu-item" tappable tap-background-color="#555" onclick="loadPage('home.html')">
+            Settings
+            <div class="notification menu-notification">3</div>
+          </ons-list-item>
+
+          <ons-list-item class="longdivider bottom-menu-item" tappable tap-background-color="#555" onclick="loadPage('another-page.html')">
+            Help
+          </ons-list-item>
+
+          <ons-list-item class="longdivider bottom-menu-item" tappable tap-background-color="#555" onclick="loadPage('another-page.html')">
+            Send feedback
+          </ons-list-item>
+        </ons-list>
+      </ons-page>
+    </ons-splitter-side>
+    <ons-splitter-content page="home.html"></ons-splitter-content>
+  </ons-splitter>
+
+  <ons-template id="home.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="openMenu()">
+            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          Main
+        </div>
+      </ons-toolbar>
+
+      <ons-row style="margin-top: 100px; text-align: center;">
+        <ons-col>
+          <ons-button modifier="light" onclick="openMenu()">
+            Toggle Menu
+          </ons-button>
+          <p style="color: #999; font-size: 13px;">Click "Toggle Menu" to close/open menu,<br> You can also swipe the page left/right.</p>
+        </ons-col>
+      </ons-row>
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="another-page.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="openMenu()">
+            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          Another Page
+        </div>
+      </ons-toolbar>
+    </ons-page>
+  </ons-template>
+
+</body>
+</html>

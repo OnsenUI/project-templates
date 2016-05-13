@@ -1,13 +1,13 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>Onsen UI Split View</Name>
-    <Description>Onsen UI Split View template for Cordova apps in Visual Studio 2015.</Description>
-    <ProjectType>JavaScript</ProjectType>
+    <Name>Onsen UI Tabbar TS</Name>
+    <Description>Onsen UI Tabbar template for Cordova apps in Visual Studio 2015.</Description>
+    <ProjectType>TypeScript</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>Onsen UI Split View</DefaultName>
+    <DefaultName>Onsen UI Tabbar TS</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
@@ -17,7 +17,7 @@
     <CreateInPlace>true</CreateInPlace>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="Onsen UI Split View.jsproj" File="Onsen UI Split View.jsproj" ReplaceParameters="true">
+    <Project TargetFileName="Onsen UI Tabbar TS.jsproj" File="Onsen UI Tabbar TS.jsproj" ReplaceParameters="true">
       <Folder Name="merges" TargetFolderName="merges">
         <Folder Name="android" TargetFolderName="android">
           <Folder Name="scripts" TargetFolderName="scripts">
@@ -33,6 +33,39 @@
           </Folder>
         </Folder>
         <Folder Name="wp8" TargetFolderName="wp8" />
+      </Folder>
+      <Folder Name="scripts" TargetFolderName="scripts">
+        <Folder Name="typings" TargetFolderName="typings">
+          <Folder Name="cordova" TargetFolderName="cordova">
+            <Folder Name="plugins" TargetFolderName="plugins">
+              <ProjectItem ReplaceParameters="true" TargetFileName="BatteryStatus.d.ts">BatteryStatus.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Camera.d.ts">Camera.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Contacts.d.ts">Contacts.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Device.d.ts">Device.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="DeviceMotion.d.ts">DeviceMotion.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="DeviceOrientation.d.ts">DeviceOrientation.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Dialogs.d.ts">Dialogs.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="FileSystem.d.ts">FileSystem.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="FileTransfer.d.ts">FileTransfer.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Globalization.d.ts">Globalization.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="InAppBrowser.d.ts">InAppBrowser.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Media.d.ts">Media.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="MediaCapture.d.ts">MediaCapture.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="NetworkInformation.d.ts">NetworkInformation.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Push.d.ts">Push.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Splashscreen.d.ts">Splashscreen.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="StatusBar.d.ts">StatusBar.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="Vibration.d.ts">Vibration.d.ts</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="WebSQL.d.ts">WebSQL.d.ts</ProjectItem>
+            </Folder>
+            <ProjectItem ReplaceParameters="true" TargetFileName="cordova.d.ts">cordova.d.ts</ProjectItem>
+          </Folder>
+          <Folder Name="onsenui" TargetFolderName="onsenui">
+            <ProjectItem ReplaceParameters="true" TargetFileName="onsenui.d.ts">onsenui.d.ts</ProjectItem>
+          </Folder>
+        </Folder>
+        <ProjectItem ReplaceParameters="true" TargetFileName="index.ts">index.ts</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="platformOverrides.ts">platformOverrides.ts</ProjectItem>
       </Folder>
       <Folder Name="www" TargetFolderName="www">
         <Folder Name="images" TargetFolderName="images" />
@@ -86,10 +119,7 @@
             </Folder>
           </Folder>
         </Folder>
-        <Folder Name="scripts" TargetFolderName="scripts">
-          <ProjectItem ReplaceParameters="true" TargetFileName="index.js">index.js</ProjectItem>
-          <ProjectItem ReplaceParameters="true" TargetFileName="platformOverrides.js">platformOverrides.js</ProjectItem>
-        </Folder>
+        <Folder Name="scripts" TargetFolderName="scripts" />
         <ProjectItem ReplaceParameters="true" TargetFileName="index.html">index.html</ProjectItem>
       </Folder>
       <ProjectItem ReplaceParameters="true" TargetFileName="config.xml">config.xml</ProjectItem>

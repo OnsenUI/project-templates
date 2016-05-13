@@ -1,13 +1,13 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>Onsen UI Tab Bar</Name>
-    <Description>Onsen UI Tab Bar template for Cordova apps in Visual Studio 2015.</Description>
+    <Name>Onsen UI Navigation</Name>
+    <Description>Onsen UI Navigation template for Cordova apps in Visual Studio 2015.</Description>
     <ProjectType>JavaScript</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>Onsen UI Tab Bar</DefaultName>
+    <DefaultName>Onsen UI Navigation</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
@@ -17,7 +17,7 @@
     <CreateInPlace>true</CreateInPlace>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="Onsen UI Tab Bar.jsproj" File="Onsen UI Tab Bar.jsproj" ReplaceParameters="true">
+    <Project TargetFileName="Onsen UI Navigation.jsproj" File="Onsen UI Navigation.jsproj" ReplaceParameters="true">
       <Folder Name="merges" TargetFolderName="merges">
         <Folder Name="android" TargetFolderName="android">
           <Folder Name="scripts" TargetFolderName="scripts">
@@ -36,6 +36,9 @@
       </Folder>
       <Folder Name="www" TargetFolderName="www">
         <Folder Name="images" TargetFolderName="images" />
+        <Folder Name="js" TargetFolderName="js">
+          <ProjectItem ReplaceParameters="true" TargetFileName="app.js">app.js</ProjectItem>
+        </Folder>
         <Folder Name="lib" TargetFolderName="lib">
           <Folder Name="angular" TargetFolderName="angular">
             <ProjectItem ReplaceParameters="true" TargetFileName="angular.js">angular.js</ProjectItem>
