@@ -69,6 +69,9 @@
       </Folder>
       <Folder Name="www" TargetFolderName="www">
         <Folder Name="images" TargetFolderName="images" />
+        <Folder Name="js" TargetFolderName="js">
+          <ProjectItem ReplaceParameters="true" TargetFileName="app.js">app.js</ProjectItem>
+        </Folder>
         <Folder Name="lib" TargetFolderName="lib">
           <Folder Name="onsen" TargetFolderName="onsen">
             <Folder Name="css" TargetFolderName="css">
