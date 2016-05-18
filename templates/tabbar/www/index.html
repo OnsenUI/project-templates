@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- JS dependencies (order matters!) -->
+  <script src="scripts/platformOverrides.js"></script>
+  <script src="lib/onsen/js/onsenui.js"></script>
+
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="lib/onsen/css/onsenui.css" />
+  <link rel="stylesheet" href="lib/onsen/css/onsen-css-components-blue-basic-theme.css" />
+
+  <title>Onsen UI Tabbar</title>
+
+  <!-- App init -->
+  <script>
+    function alertMessage(){
+        ons.notification.alert('Tapped!');
+    }
+
+    document.addEventListener('init', function(event) {
+      var page = event.target;
+      if(page.id === "home-page") {
+        var i = 5,
+          onsListContent = '',
+          onsListItem = document.querySelector('#main-list').innerHTML;
+
+        while(--i) {
+          onsListContent += onsListItem;
+        }
+
+        document.getElementById('main-list').innerHTML = onsListContent;
+      }
+
+      if(page.id === "settings-page") {
+
+      }
+    });
+  </script>
+
+  <style>
+    .profile-wrapper {
+      padding: 16px 10px 0 10px;
+    }
+
+    .profile-name {
+      font-size: 18px;
+      padding: 8px 0 2px 0;
+    }
+
+    .profile-email {
+      font-size: 15px;
+      opacity: 0.4;
+    }
+
+    .settings-header {
+      font-weight: 500;
+      font-size: 14px;
+      opacity: 0.4;
+      padding: 10px 0 0px 10px;
+      margin-bottom: -4px;
+    }
+
+    .settings-list {
+      margin-top: 10px;
+    }
+
+    .picture {
+      background-color: #ccc;
+      width: 50px;
+      height: 50px;
+    }
+
+    #main-list .right {
+      display: inline;
+    }
+
+    .label {
+      font-size: 12px;
+      color: #999;
+      float: right;
+      padding-top: 10px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!-- Cordova reference -->
+  <script src="cordova.js"></script>
+  <script src="scripts/index.js"></script>
+  <!-- -->
+
+  <ons-tabbar>
+    <ons-tab active page="home.html" label="Timeline" icon="ion-home">
+    </ons-tab>
+
+    <ons-tab page="settings.html" label="Settings" icon="ion-gear-a">
+    </ons-tab>
+  </ons-tabbar>
+
+  <ons-template id="home.html">
+    <ons-page id="home-page">
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="alertMessage()">
+            <ons-icon icon="ion-compose"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">Home</div>
+      </ons-toolbar>
+
+      <!-- This list will be filled on page initialization -->
+      <ons-list id="main-list">
+        <ons-list-item tappable onclick="alertMessage()">
+          <div class="left">
+            <div class="list__item__thumbnail picture"></div>
+          </div>
+          <div class="center">
+            <div class="list__item__title">Lorem Ipsum</div>
+            <div class="list__item__subtitle">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+          </div>
+          <div class="right">
+            <span class="label">5h</span>
+          </div>
+        </ons-list-item>
+      </ons-list>
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="settings.html">
+    <ons-page id="settings-page">
+      <ons-toolbar>
+        <div class="center">Settings</div>
+      </ons-toolbar>
+
+      <ons-row class="profile-wrapper">
+        <ons-col width="60px">
+          <div class="list__item__thumbnail picture"></div>
+        </ons-col>
+        <ons-col>
+          <div class="profile-name">Foobar</div>
+          <div class="profile-email">foobar@example.com</div>
+        </ons-col>
+      </ons-row>
+
+      <div class="settings-header">Share</div>
+      <ons-list modifier="inset" class="settings-list">
+        <ons-list-item modifier="longdivider">
+          <label class="center" for="twitter-switch">
+            Twitter
+          </label>
+          <div class="right">
+            <ons-switch modifier="list-item" input-id="twitter-switch"></ons-switch>
+          </div>
+        </ons-list-item>
+
+        <ons-list-item modifier="longdivider">
+          <label class="center" for="facebook-switch">
+            Facebook
+          </label>
+          <div class="right">
+            <ons-switch modifier="list-item" input-id="facebook-switch" checked></ons-switch>
+          </div>
+        </ons-list-item>
+      </ons-list>
+
+      <div class="settings-header">Others</div>
+      <ons-list modifier="inset" class="settings-list">
+        <ons-list-item modifier="longdivider chevron" tappable onclick="alertMessage()">
+          <div class="center">
+            Terms of Service
+          </div>
+          <ons-if class="right" platform="android">
+            <ons-icon icon="md-info-outline" class="list__item__icon"></ons-icon>
+          </ons-if>
+        </ons-list-item>
+
+        <ons-list-item modifier="longdivider chevron" tappable onclick="alertMessage()">
+          <div class="center">
+            Privacy Policy
+          </div>
+          <ons-if class="right" platform="android">
+            <ons-icon icon="md-info-outline" class="list__item__icon"></ons-icon>
+          </ons-if>
+        </ons-list-item>
+      </ons-list>
+
+      <br>
+
+      <ons-list modifier="inset">
+        <ons-list-item tappable onclick="alertMessage()">
+          <div class="left">
+            <ons-icon class="list__item__icon" icon="ion-log-out" style="opacity: 0.8"></ons-icon>
+          </div>
+          <div class="center">
+            Sign out
+          </div>
+        </ons-list-item>
+      </ons-list>
+    </ons-page>
+  </ons-template>
+</body>
+</html>

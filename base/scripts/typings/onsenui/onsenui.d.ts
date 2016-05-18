@@ -1,7 +1,79 @@
-// Type definitions for Onsen UI
+// Type definitions for Onsen UI 2
 // Project: http://onsen.io
 // Definitions by: Fran Dios <https://github.com/frankdiox/>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+
+// https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/es6-promise/es6-promise.d.ts
+interface Thenable<T> {
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => void): Thenable<U>;
+    catch<U>(onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
+}
+
+declare class Promise<T> implements Thenable<T> {
+    /**
+     * If you call resolve in the body of the callback passed to the constructor,
+     * your promise is fulfilled with result object passed to resolve.
+     * If you call reject your promise is rejected with the object passed to reject.
+     * For consistency and debugging (eg stack traces), obj should be an instanceof Error.
+     * Any errors thrown in the constructor callback will be implicitly passed to reject().
+     */
+    constructor(callback: (resolve : (value?: T | Thenable<T>) => void, reject: (error?: any) => void) => void);
+
+    /**
+     * onFulfilled is called when/if "promise" resolves. onRejected is called when/if "promise" rejects.
+     * Both are optional, if either/both are omitted the next onFulfilled/onRejected in the chain is called.
+     * Both callbacks have a single parameter , the fulfillment value or rejection reason.
+     * "then" returns a new promise equivalent to the value you return from onFulfilled/onRejected after being passed through Promise.resolve.
+     * If an error is thrown in the callback, the returned promise rejects with that error.
+     *
+     * @param onFulfilled called when/if "promise" resolves
+     * @param onRejected called when/if "promise" rejects
+     */
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Promise<U>;
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => void): Promise<U>;
+
+    /**
+     * Sugar for promise.then(undefined, onRejected)
+     *
+     * @param onRejected called when/if "promise" rejects
+     */
+    catch<U>(onRejected?: (error: any) => U | Thenable<U>): Promise<U>;
+}
+
+declare namespace Promise {
+    /**
+     * Make a new promise from the thenable.
+     * A thenable is promise-like in as far as it has a "then" method.
+     */
+    function resolve<T>(value?: T | Thenable<T>): Promise<T>;
+
+    /**
+     * Make a promise that rejects to obj. For consistency and debugging (eg stack traces), obj should be an instanceof Error
+     */
+    function reject(error: any): Promise<any>;
+    function reject<T>(error: T): Promise<T>;
+
+    /**
+     * Make a promise that fulfills when every item in the array fulfills, and rejects if (and when) any item rejects.
+     * the array passed to all can be a mixture of promise-like objects and other objects.
+     * The fulfillment value is an array (in order) of fulfillment values. The rejection value is the first rejection value.
+     */
+    function all<T>(promises: (T | Thenable<T>)[]): Promise<T[]>;
+
+    /**
+     * Make a Promise that fulfills when any item fulfills, and rejects if any item rejects.
+     */
+    function race<T>(promises: (T | Thenable<T>)[]): Promise<T>;
+}
+
+declare module 'es6-promise' {
+    var foo: typeof Promise; // Temp variable to reference Promise in local context
+    namespace rsvp {
+        export var Promise: typeof foo;
+    }
+    export = rsvp;
+}
 
 
 // Some useful types
@@ -17,203 +89,131 @@ interface objectArray {
 /**
  * @description Should be used as root component of each page. The content inside page component is scrollable
  */
-interface PageView {
+interface OnsPageElement {
     /**
-     * @return {Object} Device back button handler
-     * @description Get the associated back button handler. This method may return null if no handler is assigned
+     * @description Function to be executed when scrolling to the bottom of the page. The function receives a done callback as an argument that must be called when it's finished.
      */
-    getDeviceBackButtonHandler(): any;
+    onInfiniteScroll: Function;
+    /**
+     * @description Back-button handler.
+     */
+    backButtonHandler: any;
+    /**
+     * @description User's custom data passed to `pushPage()`-like methods.
+     */
+    data: any;
 }
-
+ 
+interface CarouselOptions{
+    callback?: Function;
+    animation?: String;
+    animationOptions?: Object;
+}
 /**
  * @description Carousel component
  */
-interface CarouselView {
+interface OnsCarouselElement {
+    /**
+    * @description Specify the index of the `<ons-carousel-item>` to show.
+    * @return Resolves to the carousel element.
+    */
+    setActiveIndex(index: number, options?: CarouselOptions): Promise<HTMLElement>;
+    /**
+    * @description Returns the index of the currently visible `<ons-carousel-item>`.
+    * @return The current carousel item index.
+    */
+    getActiveIndex(): void;
      /**
      * @description Show next ons-carousel item
+     * @return Resolves to the carousel element
      */
-    next(): void;
+    next(options?: CarouselOptions): Promise<HTMLElement>;
      /**
      * @description Show previous ons-carousel item
+     * @return Resolves to the carousel element
      */
-    prev(): void;
+    prev(options?: CarouselOptions): Promise<HTMLElement>;
      /**
-     * @description Show first ons-carousel item
-     */
-    first(): void;
-    /**
-     * @description Show last ons-carousel item
-     */
-    last(): void;
-    /**
-     * @param {Booelan} swipeable If value is true the carousel will be swipeable
-     * @description Set whether the carousel is swipeable or not
-     */
-    setSwipeable(swipeable: boolean): void;
-    /**
-     * @return {Boolean} true if the carousel is swipeable
-     * @description Returns whether the carousel is swipeable or not
-     */
-    isSwipeable(): boolean;
-    /**
-     * @param {Number} index The index that the carousel should be set to
-     * @description Specify the index of the ons-carousel-item to show
-     */
-    setActiveCarouselItemIndex(index: number): void;
-    /**
-     * @return {Number} The current carousel item index
-     * @description Returns the index of the currently visible ons-carousel-item
-     */
-    getActiveCarouselItemIndex(): number;
-    /**
-     * @param {Boolean} enabled If true auto scroll will be enabled
-     * @description Enable or disable "auto-scroll" attribute
-     */
-    setAutoScrollEnabled(enabled: boolean): void;
-    /**
-     * @return {Boolean} true if auto scroll is enabled
-     * @description Returns whether the "auto-scroll" attribute is set or not
-     */
-    isAutoScrollEnabled(): boolean;
-    /**
-     * @param {Number} ratio The desired ratio
-     * @description Set the auto scroll ratio. Must be a value between 0.0 and 1.0
-     */
-    setAutoScrollRatio(ratio: number): void;
-    /**
-     * @return {Number} The current auto scroll ratio
-     * @description Returns the current auto scroll ratio
-     */
-    getAutoScrollRatio(): number;
-    /**
-     * @param {Boolean} overscrollable If true the carousel will be overscrollable
-     * @description Set whether the carousel is overscrollable or not
-     */
-    setOverscrollable(overscrollable: boolean): void;
-    /**
-     * @return {Boolean} Whether the carousel is overscrollable or not
-     * @description Returns whether the carousel is overscrollable or not
-     */
-    isOverscrollable(): boolean;
-    /**
-     * @description Update the layout of the carousel. Used when adding ons-carousel-items dynamically or to automatically adjust the size
+     * @description Update the layout of the carousel. Used when adding ons-carousel-items dynamically or to automatically adjust the size.
      */
     refresh(): void;
-    /**
-     * @return {Boolean} Whether the carousel is disabled or not
-     * @description Returns whether the dialog is disabled or enabled
+     /**
+     * @description Show first ons-carousel item
+     * @Resolves to the carousel element
      */
-    isDisabled(): boolean;
+    first(): Promise<HTMLElement>;
     /**
-     * @param {Boolean} disabled If true the carousel will be disabled
-     * @description Disable or enable the dialog
+     * @description Show last ons-carousel item
+     * @return Resolves to the carousel element
      */
-    setDisabled(disabled: boolean): void;
+    last(): Promise<HTMLElement>;
     /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
+     * @description The number of carousel items.
+     **/ 
+    itemCount: number;
     /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
+     * @description The current auto scroll ratio.
+     **/ 
+    autoScrollRatio: number;
     /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
+     * @description true if the carousel is swipeable.
+     **/ 
+    swipeable: boolean;
+    /**
+     * @description true if auto scroll is enabled.
+     **/ 
+    autoScroll: boolean;
+    /**
+     * @description Whether the carousel is disabled or not.
+     **/ 
+    disabled: boolean;
+    /**
+     * @description Whether the carousel is overscrollable or not.
+     **/ 
+    overscrollable: boolean;
+    /**
+     * @description Whether the carousel is centered or not.
+     **/ 
+    centered: boolean;
 }
 
 /**
  * @description Component that adds "pull-to-refresh" to an <ons-page> element
  */
-interface PullHookView {
+ //later should be updated
+interface OnsPullHookElement {
     /**
-     * @param {Boolean} disabled If true the pull hook will be disabled
-     * @description Disable or enable the component
-     */
-    setDisabled(disabled: boolean): void;
-    /**
-     * @return {Boolean} true if the pull hook is disabled
-     * @description Returns whether the component is disabled or enabled
-     */
-    isDisabled(): boolean;
-    /**
-     * @param {Number} height Desired height
-     * @description Specify the height
-     */
-    setHeight(height: number): void;
+    * @description The height of the pull hook in pixels. The default value is `64px`.
+    */
+    height: string;
     /**
      * @param {Number} thresholdHeight Desired threshold height
-     * @description Specify the threshold height
+     * @description The thresholdHeight of the pull hook in pixels. The default value is `96px`.
      */
-    setThresholdHeight(thresholdHeight: number): void;
+    thresholdHeight: string;
     /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
+    * @description The current number of pixels the pull hook has moved.
+    */
+    state: string;
     /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
+    * @description The current number of pixels the pull hook has moved.
+    */
+    pullDistance: number;
     /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
+     * @description A boolean value that specifies whether the element is disabled or not.
      */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
+    disabled: boolean;
+    /**
+     * @description Define the function that will be called in the `"action"` state.
+     */
+    onAction?: Function;
 }
 
-/**
- * @description Divides the screen into a left and right section
- */
-interface SplitView {
-    /**
-     * @param {String} pageUrl Page URL. Can be either an HTML document or an <ons-template>
-     * @description Show the page specified in pageUrl in the right section
-     */
-    setMainPage(pageUrl: string): void;
-    /**
-     * @param {String} pageUrl Page URL. Can be either an HTML document or an <ons-template>
-     * @description Show the page specified in pageUrl in the left section
-     */
-    setSecondaryPage(pageUrl: string): void;
-    /**
-     * @description Trigger an 'update' event and try to determine if the split behaviour should be changed
-     */
-    update(): void;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
-}
+
 
 interface dialogOptions {
     animation?: string;
-    callback?: any;
+    callback?: Function;
 }
 
 
@@ -221,219 +221,96 @@ interface dialogOptions {
  * @modifier android Display an Android style alert dialog
  * @description Alert dialog that is displayed on top of the current screen
  */
-interface AlertDialogView {
+interface OnsAlertDialogElement {
     /**
      * @param {Object} [options] Parameter object
      * @param {String} [options.animation] Animation name. Available animations are "fade", "slide" and "none"
      * @param {Function} [options.callback] Function to execute after the dialog has been revealed
      * @description Show the alert dialog
      */
-    show(options?: dialogOptions): void;
+    show(options?: dialogOptions): Promise<HTMLElement>;
     /**
      * @param {Object} [options] Parameter object
      * @param {String} [options.animation] Animation name. Available animations are "fade", "slide" and "none"
      * @param {Function} [options.callback] Function to execute after the dialog has been hidden
      * @description Hide the alert dialog
      */
-    hide(options?: dialogOptions): void;
-    /**
-     * @description Returns whether the dialog is visible or not
-     * @return {Boolean} true if the dialog is currently visible
-     */
-    isShown(): boolean;
-    /**
-     * @description Destroy the alert dialog and remove it from the DOM tree
-     */
-    destroy(): void;
-    /**
-     * @description Define whether the dialog can be canceled by the user or not
-     * @param {Boolean} cancelable If true the dialog will be cancelable
-     */
-    setCancelable(cancelable: boolean): void;
-    /**
-     * @description Returns whether the dialog is cancelable or not
-     * @return {Boolean} true if the dialog is cancelable
-     */
-    isCancelable(): boolean;
-    /**
-     * @description Disable or enable the alert dialog
-     * @param {Boolean} disabled If true the dialog will be disabled
-     */
-    setDisabled(disabled: boolean): void;
-    /**
-     * @description Returns whether the dialog is disabled or enabled
-     * @return {Boolean} true if the dialog is disabled
-     */
-    isDisabled(): boolean;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
+    hide(options?: dialogOptions): Promise<HTMLElement>;
+     /**
+      * @description A boolean value that specifies whether the dialog is disabled or not.
+      */
+    disabled: boolean;
+     /**
+      * @description A boolean value that specifies whether the dialog is cancelable or not. When the dialog is cancelable it can be closed by tapping the background or by pressing the back button on Android devices.
+      */
+    cancelable: boolean;
 }
 
 /**
  * @description Dialog that is displayed on top of current screen
  */
-interface DialogView {
+interface OnsDialogElement {
+    /**
+     * @return {Object} Device back button handler
+     * @description Retrieve the back button handler for overriding the default behavior
+     */
+    onDeviceBackButton(): any;
     /**
      * @param {Object} [options] Parameter object
      * @param {String} [options.animation] Animation name. Available animations are "none", "fade" and "slide"
      * @param {Function} [options.callback] This function is called after the dialog has been revealed
      * @description Show the dialog
      */
-    show(options?: dialogOptions): void;
+    show(options?: dialogOptions): Promise<HTMLElement>;
     /**
      * @param {Object} [options] Parameter object
      * @param {String} [options.animation] Animation name. Available animations are "none", "fade" and "slide"
      * @param {Function} [options.callback] This functions is called after the dialog has been hidden
      * @description Hide the dialog
      */
-    hide(options?: dialogOptions): void;
-    /**
-     * @description Returns whether the dialog is visible or not
-     * @return {Boolean} true if the dialog is visible
-     */
-    isShown(): boolean;
+    hide(options?: dialogOptions): Promise<HTMLElement>;
     /**
      * @description Destroy the dialog and remove it from the DOM tree
      */
     destroy(): void;
-    /**
-     * @return {Object} Device back button handler
-     * @description Retrieve the back button handler for overriding the default behavior
-     */
-    getDeviceBackButtonHandler(): any;
-    /**
-     * @param {Boolean} cancelable If true the dialog will be cancelable
-     * @description Define whether the dialog can be canceled by the user or not
-     */
-    setCancelable(cancelable: boolean): void;
-    /**
-     * @description Returns whether the dialog is cancelable or not
-     * @return {Boolean} true if the dialog is cancelable
-     */
-    isCancelable(): boolean;
-    /**
-     * @description Disable or enable the dialog
-     * @param {Boolean} disabled If true the dialog will be disabled
-     */
-    setDisabled(disabled: boolean): void;
-    /**
-     * @description Returns whether the dialog is disabled or enabled
-     * @return {Boolean} true if the dialog is disabled
-     */
-    isDisabled(): boolean;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
-}
-
-/**
- * @modifier outline Button with outline and transparent background
- * @modifier light Button that doesn't stand out
- * @modifier quiet Button with no outline and or background
- * @modifier cta Button that really stands out
- * @modifier large Large button that covers the width of the screen
- * @modifier large--quiet Large quiet button
- * @modifier large--cta Large call to action button
- * @description Button component. If you want to place a button in a toolbar, use ons-toolbar-button or ons-back-button instead
- */
-interface ButtonView {
-    /**
-     * @description Show spinner on the button
-     */
-    startSpin(): void;
-    /**
-     * @description Remove spinner from button
-     */
-    stopSpin(): void;
-    /**
-     * @return {Boolean} true if the button is spinning
-     * @description Return whether the spinner is visible or not
-     */
-    isSpinning(): boolean;
-    /**
-     * @description Set spin animation. Possible values are "slide-left" (default), "slide-right", "slide-up", "slide-down", "expand-left", "expand-right", "expand-up", "expand-down", "zoom-out", "zoom-in"
-     * @param {String} animation Animation name
-     */
-    setSpinAnimation(animation: string): void;
-    /**
-     * @description Disable or enable the button
-     */
-    setDisabled(disabled: boolean): void;
-    /**
-     * @return {Boolean} true if the button is disabled
-     * @description Returns whether the button is disabled or enabled
-     */
-    isDisabled(): boolean;
+     /**
+      * @description A boolean value that specifies whether the dialog is disabled or not.
+      */
+    disabled: boolean;
+     /**
+      * @description A boolean value that specifies whether the dialog is cancelable or not. When the dialog is cancelable it can be closed by tapping the background or by pressing the back button on Android devices.
+      */
+    cancelable: boolean;
 }
 
 /**
  * @description Switch component
  */
-interface SwitchView {
+interface OnsSwitchElement {
     /**
-     * @return {Boolean} true if the switch is on
-     * @description Returns true if the switch is ON
+     * @description If true the switch will be set to on.
      */
-    isChecked(): boolean;
+    checked: boolean;
     /**
-     * @param {Boolean} checked If true the switch will be set to on
-     * @description Set the value of the switch. isChecked can be either true or false
+     * @description Whether the element is disabled or not.
      */
-    setChecked(checked: boolean): void;
+    disabled: boolean;
     /**
-     * @return {HTMLElement} The underlying checkbox element
-     * @description Get inner input[type=checkbox] element
+     * @description The underlying checkbox element.
      */
-    getCheckboxElement(): HTMLElement;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
+    checkbox: HTMLElement;
+}
+
+
+interface ModalOptions {
+     /**
+      * @description Animation name. Available animations are `"none"` and `"fade"`.
+      */        
+    animation?: string;
+     /**
+      * @description Specify the animation's duration, delay and timing. E.g. `{duration: 0.2, delay: 0.4, timing: 'ease-in'}`.
+      */    
+    animationOptions?: string;
 }
 
 /**
@@ -441,43 +318,103 @@ interface SwitchView {
  *     Modal component that masks current screen
  *     Underlying components are not subject to any events while the modal component is shown
  */
-interface ModalView {
+interface OnsModalElement{
     /**
+     * @return Device back button handler
+     * @param {String} [options.animation] Animation name. Available animations are `"none"` and `"fade"`.
+     * @param {String} [options.animationOptions] Specify the animation's duration, delay and timing. E.g. `{duration: 0.2, delay: 0.4, timing: 'ease-in'}`.
      * @description Toggle modal visibility
      */
-    toggle(): void;
+    toggle(options?: ModalOptions): Promise<HTMLElement>;
     /**
+     * @param {Object} [options] Parameter object
+     * @param {String} [options.animation] Animation name. Available animations are `"none"` and `"fade"`.
+     * @param {String} [options.animationOptions] Specify the animation's duration, delay and timing. E.g. `{duration: 0.2, delay: 0.4, timing: 'ease-in'}`.
      * @description Show modal
      */
-    show(): void;
+    show(options?: ModalOptions): Promise<HTMLElement>;
     /**
+     * @return Resolves to the hidden element
+     * @param {String} [options.animation] Animation name. Available animations are `"none"` and `"fade"`.
+     * @param {String} [options.animationOptions] Specify the animation's duration, delay and timing. E.g. `{duration: 0.2, delay: 0.4, timing: 'ease-in'}`.     
      * @description Hide modal
      */
-    hide(): void;
-    /**
-     * @return {Object} Device back button handler
-     * @description Retrieve the back button handler
-     */
-    getDeviceBackButtonHandler(): any;
+    hide(options?: ModalOptions): Promise<HTMLElement>;
+     /**
+      * @description Back-button handler.
+      */        
+    onDeviceBackButton: any;
+     /**
+      * @description Whether the dialog is visible or not.
+      */    
+    visible: boolean;
 }
 
 interface navigatorOptions {
+     /**
+     * @description Animation name. Available animations are `"slide"`, `"lift"`, `"fade"` and `"none"`. These are platform based animations. For fixed animations, add `"-ios"` or `"-md"` suffix to the animation name. E.g. `"lift-ios"`, `"lift-md"`. Defaults values are `"slide-ios"` and `"fade-md"`.
+     */
     animation?: string;
-    onTransitionEnd?: any;
+     /**
+     * @description Specify the animation's duration, delay and timing. E.g. `{duration: 0.2, delay: 0.4, timing: 'ease-in'}`.
+     */
+    animationOptions?: string;
+     /**
+     * @description If this parameter is `true`, the previous page will be refreshed (destroyed and created again) before `popPage()` action.
+     */
+    refresh?: boolean;
+    /**
+     * @description Function that is called when the transition has ended.
+     */
+    callback?: Function;
+}
+
+interface PushPageOptions {
+    page?: any;
+    options?: {
+        page: any,
+        pageHTML: any,
+        animation: any,
+        animationOptions: any,
+        callback: any,
+        data: any
+    }
+}
+
+interface ReplacePageOptions {
+    page?: any;
+    options?: {
+        animation: any,
+        animationOptions: any,
+        callback: any,
+        data: any
+    }
 }
 
 /**
  * @description A component that provides page stack management and navigation. This component does not have a visible content
  */
-interface NavigatorView {
+interface OnsNavigatorElement {
+    /**
+     * @param {Object} [options] Parameter object
+     * @param {Function} [options.onTransitionEnd] Function that is called when the transition has ended
+     * @description Pops the current page from the page stack. The previous page will be displayed
+     */
+    popPage(options?: navigatorOptions): Promise<HTMLElement>;
     /**
      * @param {String} pageUrl Page URL. Can be either a HTML document or a <code>&lt;ons-template&gt;</code>
      * @param {Object} [options] Parameter object
      * @param {String} [options.animation] Animation name. Available animations are "slide", "simpleslide", "lift", "fade" and "none"
      * @param {Function} [options.onTransitionEnd] Function that is called when the transition has ended
-     * @description Pushes the specified pageUrl into the page stack
+     * @return Promise which resolves to the pushed page.
+     * @description Pushes the specified pageUrl into the page stack.
      */
-    pushPage(pageUrl: string, options?: navigatorOptions): void;
+    pushPage(pageUrl: string, options?: PushPageOptions): Promise<HTMLElement>;
+    /**
+     * @return Promise which resolves to the inserted page
+     * @description Replaces the current page with the specified one. Extends pushPage parameters.
+     */
+    replacePage(pageUrl: string, options?: ReplacePageOptions): Promise<HTMLElement>;
     /**
      * @param {Number} index The index where it should be inserted
      * @param {String} pageUrl Page URL. Can be either a HTML document or a <code>&lt;ons-template&gt;</code>
@@ -485,13 +422,7 @@ interface NavigatorView {
      * @param {String} [options.animation] Animation name. Available animations are "slide", "simpleslide", "lift", "fade" and "none"
      * @description Insert the specified pageUrl into the page stack with specified index
      */
-    insertPage(index: number, pageUrl: string, options?: navigatorOptions): void;
-    /**
-     * @param {Object} [options] Parameter object
-     * @param {Function} [options.onTransitionEnd] Function that is called when the transition has ended
-     * @description Pops the current page from the page stack. The previous page will be displayed
-     */
-    popPage(options?: navigatorOptions): void;
+    insertPage(index: number, pageUrl: string, options?: navigatorOptions): Promise<HTMLElement>;
     /**
      * @param {String} pageUrl Page URL. Can be either a HTML document or an <code>&lt;ons-template&gt;</code>
      * @param {Object} [options] Parameter object
@@ -499,165 +430,76 @@ interface NavigatorView {
      * @param {Function} [options.onTransitionEnd] Function that is called when the transition has ended
      * @description Clears page stack and adds the specified pageUrl to the page stack
      */
-    resetToPage(pageUrl: string, options?: navigatorOptions): void;
+    resetToPage(pageUrl: string, options?: navigatorOptions): Promise<HTMLElement>;
     /**
-     * @return {Object} Current page object
-     * @description Get current page's navigator item. Use this method to access options passed by pushPage() or resetToPage() method
+     * @param {String} || {Number}
+     * @description Page URL or index of an existing page in navigator's stack.
      */
-    getCurrentPage(): any;
-    /**
-     * @return {List} List of page objects
-     * @description Retrieve the entire page stack of the navigator
-     */
-    getPages(): objectArray;
-    /**
-     * @return {Object} Device back button handler
-     * @description Retrieve the back button handler for overriding the default behavior
-     */
-    getDeviceBackButtonHandler(): any;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
-}
+    bringPageTop({item: String,item: Number}, options?: Object): Promise<HTMLElement>;
 
-interface slidingMenuOptions {
-    closeMenu?: boolean;
-    callback?: any;
-}
+    /**
+     * @return {HTMLElement}
+     * @description Current top page element. Use this method to access options passed by `pushPage()`-like methods.
+     */
+    topPage: HTMLElement; //attribute length in future?
+    /**
+     * @description Navigator's page stack.
+     */
+    pages: any;
+    /**
+     * @description Default options object. Attributes have priority over this property.
+     */
+    options: navigatorOptions;
 
-/**
- * @description Component for sliding UI where one page is overlayed over another page. The above page can be slided aside to reveal the page behind
- */
-interface SlidingMenuView {
-    /**
-     * @param {String} pageUrl Page URL. Can be either an HTML document or an <code>&lt;ons-template&gt;</code>
-     * @param {Object} [options] Parameter object
-     * @param {Boolean} [options.closeMenu] If true the menu will be closed
-     * @param {Function} [options.callback] Function that is executed after the page has been set
-     * @description Show the page specified in pageUrl in the main contents pane
-     */
-    setMainPage(pageUrl: string, options?: slidingMenuOptions): void;
-    /**
-     * @param {String} pageUrl Page URL. Can be either an HTML document or an <code>&lt;ons-template&gt;</code>
-     * @param {Object} [options] Parameter object
-     * @param {Boolean} [options.closeMenu] If true the menu will be closed after the menu page has been set
-     * @param {Function} [options.callback] This function will be executed after the menu page has been set
-     * @description Show the page specified in pageUrl in the side menu pane
-     */
-    setMenuPage(pageUrl: string, options?: slidingMenuOptions): void;
-    /**
-     * @param {Object} [options] Parameter object
-     * @param {Function} [options.callback] This function will be called after the menu has been opened
-     * @description Slide the above layer to reveal the layer behind
-     */
-    openMenu(options?: slidingMenuOptions): void;
-    /**
-     * @param {Object} [options] Parameter object
-     * @param {Function} [options.callback] This function will be called after the menu has been closed
-     * @description Slide the above layer to hide the layer behind
-     */
-    closeMenu(options?: slidingMenuOptions): void;
-    /**
-     * @param {Object} [options] Parameter object
-     * @param {Function} [options.callback] This function will be called after the menu has been opened or closed
-     * @description Slide the above layer to reveal the layer behind if it is currently hidden, otherwise, hide the layer behind
-     */
-    toggleMenu(options?: slidingMenuOptions): void;
-    /**
-     * @return {Boolean} true if the menu is currently open
-     * @description Returns true if the menu page is open, otherwise false
-     */
-    isMenuOpened(): boolean;
-    /**
-     * @return {Object} Device back button handler
-     * @description Retrieve the back-button handler
-     */
-    getDeviceBackButtonHandler(): any;
-    /**
-     * @param {Boolean} swipeable If true the menu will be swipeable
-     * @description Specify if the menu should be swipeable or not
-     */
-    setSwipeable(swipeable: boolean): void;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
 }
 
 interface tabbarOptions {
+    /**
+     * @description If true the page will not be changed.
+     */
     keepPage?: boolean;
+    /**
+     * @description Animation name. Available animations are `"fade"`, `"slide"` and `"none"`.
+     */
+    animation?: string;
+    /**
+     * @description Specify the animation's duration, delay and timing. E.g. `{duration: 0.2, delay: 0.4, timing: 'ease-in'}`.
+     */
+    animationOptions?: string;
+    /**
+     *
+     */
+    callback?: Function;
 }
 
 /**
  * @description A component to display a tab bar on the bottom of a page. Used with ons-tab to manage pages using tabs
  */
-interface TabbarView {
+interface OnsTabbarElement {
+    /**
+     * @param {String} url Page URL. Can be either an HTML document or an <code>&lt;ons-template&gt;</code>
+     * @return Resolves to the new page element.
+     * @description Displays a new page without changing the active index
+     */
+    loadPage(url: string, options?: tabbarOptions): Promise<HTMLElement>;
     /**
      * @param {Number} index Tab index
      * @param {Object} [options] Parameter object
      * @param {Boolean} [options.keepPage] If true the page will not be changed
-     * @param {String} [options.animation] Animation name. Available animations are "fade" and "none"
-     * @return {Boolean} true if the change was successful
+     * @param {String} [options.animation] Animation name. Available animations are `"fade"`, `"slide"` and `"none"`.
+     * @return Resolves to the new page element.
      * @description Show specified tab page. Animations and other options can be specified by the second parameter
      */
-    setActiveTab(index: number, options?: tabbarOptions): boolean;
+    setActiveTab(index: number, options?: tabbarOptions): Promise<HTMLElement>;
+    /**
+     * @description Used to hide or show the tab bar.
+     */
+    setTabbarVisibility(visible: boolean): void;
     /**
      * @return {Number} The index of the currently active tab
      * @description Returns tab index on current active tab. If active tab is not found, returns -1
      */
     getActiveTabIndex(): number;
-    /**
-     * @param {String} url Page URL. Can be either an HTML document or an <code>&lt;ons-template&gt;</code>
-     * @description Displays a new page without changing the active index
-     */
-    loadPage(url: string): void;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
 }
 
 interface popoverOptions {
@@ -668,109 +510,302 @@ interface popoverOptions {
  * @modifier android Display an Android style popover
  * @description A component that displays a popover next to an element
  */
-interface PopoverView {
+interface OnsPopoverElement {
     /**
      * @param {String|Event|HTMLElement} target Target element. Can be either a CSS selector, an event object or a DOM element
      * @param {Object} [options] Parameter object
      * @param {String} [options.animation] Animation name. Available animations are "fade" and "none"
+     * @return Resolves to the displayed element
      * @description Open the popover and point it at a target. The target can be either an event, a css selector or a DOM element
      */
-    show(target: any, options?: popoverOptions): void;
+    show(target: any, options?: popoverOptions): Promise<HTMLElement>;
     /**
      * @param {Object} [options] Parameter object
      * @param {String} [options.animation] Animation name. Available animations are "fade" and "none"
+     * @return Resolves to the hidden element
      * @description Close the popover
      */
-    hide(options?: popoverOptions): void;
+    hide(options?: popoverOptions): Promise<HTMLElement>;
     /**
-     * @return {Boolean} true if the popover is visible
-     * @description Returns whether the popover is visible or not
+     * @description Whether the dialog is visible or not.
      */
-    isShown(): boolean;
+    visible: boolean;
     /**
-     * @description Destroy the popover and remove it from the DOM tree
+     * @description A boolean value that specifies whether the popover is cancelable or not. When the popover is cancelable it can be closed by tapping the background or by pressing the back button on Android devices.
      */
-    destroy(): void;
+    cancelable: boolean;
     /**
-     * @param {Boolean} cancelable If true the popover will be cancelable
-     * @description Set whether the popover can be canceled by the user when it is shown
+     * @description Retrieve the back- button handler.
      */
-    setCancelable(cancelable: boolean): void;
+    onDeviceBackButton: any;
+}
+
+interface SplitterSideOptions {
     /**
-     * @return {Boolean} true if the popover is cancelable
-     * @description Returns whether the popover is cancelable or not
+     * @description This function will be called after the menu has been opened.
+     * @return {Function}
      */
-    isCancelable(): boolean;
+    callback?: Function;
+}
+
+interface OnsSplitterSideElement {
     /**
-     * @param {Boolean} disabled If true the popover will be disabled
-     * @description Disable or enable the popover
+     * @description Page element loaded in the splitter side.
      */
-    setDisabled(disabled: boolean): void;
+    page: string;
     /**
-     * @return {Boolean} true if the popover is disabled
-     * @description Returns whether the popover is disabled or enabled
+     * @description Current mode. Possible values are "split", "collapse", "closed", "open" or "changing".
      */
-    isDisabled(): boolean;
+    mode: string;
     /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
+     * @description Returns whether the popover is visible or not.
+     * @return {Boolean} This value is `true` when the menu is open.
      */
-    on(eventName: string, listener: (eventObject: any) => any): void;
+    isOpen: boolean;
     /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
+     * @description Open menu in collapse mode.
+     * @return Resolves to the splitter side element or false if not in collapse mode
      */
-    once(eventName: string, listener: (eventObject: any) => any): void;
+    open(options?: SplitterSideOptions): Promise<HTMLElement | boolean>;
     /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
+     * @description Close menu in collapse mode.
+     * @param {Object} [option]
+     * @return Resolves to the splitter side element or false if not in collapse mode
      */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
+    close(options?: SplitterSideOptions): Promise<HTMLElement | boolean>;
+    /**
+     * @description Opens if it's closed. Closes if it's open.
+     * @param {Object} [options]
+     * @return Resolves to the splitter side element or false if not in collapse mode
+     */
+    toggle(options?: SplitterSideOptions): Promise<HTMLElement | boolean>;
+    /**
+     * @description Show the page specified in pageUrl in the right section
+     * @param {String} page Page URL. Can be either an HTML document or an <ons-template>.
+     * @param {Object} [option]
+     * @return Resolves to the new page element
+     */
+    load(page: string, options?: SplitterSideOptions): Promise<HTMLElement>;
+}
+
+interface LazyRepeatOptions {
+    /**
+     * @description This function should return a `HTMLElement`. To help rendering the element, the current index and a template is supplied as arguments. The template is the initial content of the `<ons-lazy-repeat>` element.
+     */
+    createItemContent?: HTMLElement;
+    /**
+     * @description Should return the number of items in the list.
+     */
+    countItems?: number;
+    /**
+     * @description Should return the height of an item. The index is provided as an argument. This is important when rendering lists where the items have different height. The function is optional and if it isn't present the height of the first item will be automatically calculated and used for all other items.
+     */
+    calculateItemHeight?: number;
+    /**
+     * @description This function is used called when an item is removed from the DOM. The index and DOM element is provided as arguments. The function is optional but may be important in order to avoid memory leaks.
+     */
+    destroyItem?: string;
+    /**
+     * @description Function which recieves an index and the scope for the item. Can be used to configure values in the item scope.
+     */
+    configureItemScope?: number;
+}
+
+interface OnsLazyRepeatElement {
+    /**
+     * @description Refresh the list. Use this method when the data has changed.
+     */
+    refresh(): void;
+    /**
+     * @Specify a delegate object to load and unload item elements.
+     */    
+    delegate: LazyRepeatOptions;
+}
+
+
+interface OnsButtonElement {
+    /**
+     * @description A boolean value that specifies if the button is disabled or not.
+     */
+    disabled: boolean;
+}
+
+interface OnsFabElement {
+    /**
+     * @description Show the floating action button.
+     */
+    show(): void;
+    /**
+     * @description Hide the floating action button.
+     */
+    hide(): void;
+    /**
+     * @description Toggle the visibility of the button.
+     */
+    toggle(): void;
+    /**
+     * @description A boolean value that specifies if the button is disabled or not.
+     */
+    disabled: boolean;
+    /**
+     * @description Weher the dialog is visible or not.
+     */
+    visible: boolean;
+}
+
+interface OnsInputElement {
+    /**
+     * @description The current value of the input.
+     */    
+    value: string;
+    /**
+     * @description This boolean specifies whether the input is checked or not. Only works for `radio` and `checkbox` type inputs.
+     */    
+    checked: boolean;
+    /**
+     * @description A boolean value that specifies whether the input is disabled or not.
+     */
+    disabled: boolean;
+}
+
+interface OnsRangeElement {
+    /**
+     * @description A boolean value that specifies whether the input is disabled or not.
+     */
+    disabled: boolean;
+    /**
+     * @description The current value of the input.
+     */    
+    value: string;
+}
+
+interface OnsRippleElement {
+    /**
+     * @description A boolean value that specifies whether the input is disabled or not.
+     */
+    disabled: boolean;
+}
+
+interface SplitterContentOptions {
+    /**
+     * @description This function will be called after the menu has been opened.
+     * @return {Function}
+     */
+    callback?: Function;
+}
+
+interface OnsSplitterContentElement{
+    /**
+     * @description Page element loaded in the splitter content.
+     */
+    page: string;
+    /**
+     * @description Show the page specified in pageUrl in the right section. Returns: Resolves to the new page element
+     * @return {Function}
+     */
+    load(page: string, options?: SplitterContentOptions): Promise<HTMLElement>;
+}
+
+interface OnsSplitterElement {
+    /**
+     * @description Left `<ons-splitter-side>` element.
+     */
+    left: HTMLElement;
+    /**
+     * @description Right `<ons-splitter-side>` element.
+     */
+    right: HTMLElement;
+    /**
+     * @description The `<ons-splitter-content>` element.
+     */
+    content: HTMLElement;
+    /**
+     * @description Retrieve the back button handler.
+     */
+    onDeviceBackButton: Function;
+}
+
+interface BackButtonOptions {
+    /**
+     * @description Animation name. Available animations are "slide", "lift", "fade" and "none". These are platform based animations. For fixed animations, add "-ios" or "-md" suffix to the animation name. E.g. "lift-ios", "lift-md". Defaults values are "slide-ios" and "fade-md".
+     */
+    animation?: string;
+    /**
+     * @description Specify the animation's duration, delay and timing. E.g. `{duration: 0.2, delay: 0.4, timing: 'ease-in'}`.
+     */
+    animationOptions?: string;
+    /**
+     * @description Function that is called when the transition has ended.
+     */
+    callback?: Function;
+    /**
+     * @description The previous page will be refreshed (destroyed and created again) before popPage action.
+     */
+    refresh?: boolean;
+}
+
+interface OnsBackButtonElement {
+    /**
+     * @Options Options object.
+     */
+    options?: BackButtonOptions;
+}
+
+interface OnsProgressBarElement {
+    /**
+     * @description Current progress. Should be a value between 0 and 100.
+     */
+    value: number;
+    /**
+     * @description Current secondary progress. Should be a value between 0 and 100.
+     */
+    secondaryValue: number;
+    /**
+     * @description If this property is `true`, an infinite looping animation will be shown.
+     */
+    indeterminate: boolean;
+}
+
+interface OnsProgressCircularElement {
+    /**
+     * @description Current progress. Should be a value between 0 and 100.
+     */
+    value: number;
+    /**
+     * @description Current secondary progress. Should be a value between 0 and 100.
+     */
+    secondaryValue: number;
+    /**
+     * @description If this property is `true`, an infinite looping animation will be shown.
+     */
+    indeterminate: boolean;
 }
 
 //# Onsen Objects
+
+interface onsOptions {
+    parentScope?: Object;
+}
 
 /**
  * @description A global object that's used in Onsen UI. This object can be reached from the AngularJS scope
  */
 interface onsStatic {
     /**
+     * @return {Boolean} Will be true if Onsen UI is initialized
+     * @description Returns true if Onsen UI is initialized
+     */
+    isReady(): boolean;
+    /**
+     * @return {Boolean} Will be true if the app is running in Cordova
+     * @description Returns true if running inside Cordova
+     */
+    isWebView(): boolean;
+    /**
      * @description Method used to wait for app initialization. The callback will not be executed until Onsen UI has been completely initialized
      * @param {Function} callback Function that executes after Onsen UI has been initialized
      */
     ready(callback: any): void;
-    /**
-     * @description Initialize Onsen UI. Can be used to load Onsen UI without using the <code>ng-app</code> attribute from AngularJS
-     * @param {String} [moduleName] AngularJS module name
-     * @param {Array} [dependencies] List of AngularJS module dependencies
-     * @return {Object} An AngularJS module object
-     */
-    bootstrap(moduleName?: string, dependencies?: objectArray): any;
-    /**
-     * @description Enable status bar fill feature on iOS7 and above
-     */
-    enableAutoStatusBarFill(): void;
-    /**
-     * @description Disable status bar fill feature on iOS7 and above
-     */
-    disableAutoStatusBarFill(): void;
-    /**
-     * @param {String} name Name of component, i.e. 'ons-page'
-     * @param {Object|jqLite|HTMLElement} [dom] $event, jqLite or HTMLElement object
-     * @return {Object} Component object. Will return null if no component was found
-     * @description Find parent component object of <code>dom</code> element
-     */
-    findParentComponentUntil(name: string, dom?: any): any;
-    /**
-     * @param {String} selector CSS selector
-     * @param {HTMLElement} [dom] DOM element to search from
-     * @return {Object} Component object. Will return null if no component was found
-     * @description Find component object using CSS selector
-     */
-    findComponent(selector: string, dom?: HTMLElement): any;
     /**
      * @param {Function} listener Function that executes when device back button is pressed
      * @description Set default handler for device back button
@@ -785,61 +820,59 @@ interface onsStatic {
      */
     enableDeviceBackButtonHandler(): void;
     /**
-     * @return {Boolean} Will be true if Onsen UI is initialized
-     * @description Returns true if Onsen UI is initialized
+     * @description Enable status bar fill feature on iOS7 and above
      */
-    isReady(): boolean;
+    enableAutoStatusBarFill(): void;
     /**
-     * @param {HTMLElement} dom Element to compile
-     * @description Compile Onsen UI components
+     * @description Disable status bar fill feature on iOS7 and above
      */
-    compile(dom: HTMLElement): void;
+    disableAutoStatusBarFill(): void;
     /**
-     * @return {Boolean} Will be true if the app is running in Cordova
-     * @description Returns true if running inside Cordova
+     * @description Disable all animations. Could be handy for testing and older devices.
      */
-    isWebView(): boolean;
+    disableAnimations(): void;
     /**
-     * @param {String} page Page name. Can be either an HTML file or an <ons-template> containing a <ons-alert-dialog> component
-     * @param {Object} [options] Parameter object
-     * @param {Object} [options.parentScope] Parent scope of the dialog. Used to bind models and access scope methods from the dialog
-     * @return {Promise} Promise object that resolves to the alert dialog component object
-     * @description Create a alert dialog instance from a template
+     * @description Enable animations (default).
      */
-    createAlertDialog(page: string): any;
+    enableAnimations(): void;
     /**
-     * @param {String} page Page name. Can be either an HTML file or an <ons-template> containing a <ons-dialog> component
-     * @param {Object} [options] Parameter object
-     * @param {Object} [options.parentScope] Parent scope of the dialog. Used to bind models and access scope methods from the dialog
-     * @return {Promise} Promise object that resolves to the dialog component object
-     * @description Create a dialog instance from a template
+     * @description Refresh styling for the given platform.
      */
-    createDialog(page: string): any;
+    forcePlatformStyling(platform: string): void;
     /**
-     * @param {String} page Page name. Can be either an HTML file or an <ons-template> containing a <ons-dialog> component
-     * @param {Object} [options] Parameter object
-     * @param {Object} [options.parentScope] Parent scope of the dialog. Used to bind models and access scope methods from the dialog
-     * @return {Promise} Promise object that resolves to the popover component object
-     * @description Create a popover instance from a template
+     * @description Create a popover instance from a template.
+     * @return Promise object that resolves to the popover component object.
      */
-    createPopover(page: string): any;
-
+    createPopover(page: string, options?: onsOptions): Promise<HTMLElement>;
+    /**
+     * @description Create a dialog instance from a template.
+     * @return Promise object that resolves to the dialog component object.
+     */
+    createDialog(page: string, options?: onsOptions): Promise<HTMLElement>;
+    /**
+     * @description Create a alert dialog instance from a template.
+     * @return Promise object that resolves to the alert dialog component object.
+     */
+    createAlertDialog(page: string, options?: onsOptions): Promise<HTMLElement>;
+    /**
+     * @description If no page is defined for the `ons-loading-placeholder` attribute it will wait for this method being called before loading the page.
+     */
+    resolveLoadingPlaceholder(page: string): void;
     /**
      * @description Utility methods to create different kinds of alert dialogs. There are three methods available: alert, confirm and prompt
      */
     notification: onsNotification;
-
     /**
      * @description Utility methods for orientation detection
      */
     orientation: onsOrientation;
-
     /**
      * @description Utility methods to detect current platform
      */
     platform: onsPlatform;
+    
 }
-
+declare var ons: onsStatic;
 
 interface alertOptions {
     message?: string;
@@ -852,6 +885,7 @@ interface alertOptions {
     title?: string;
     modifier?: string;
     callback?: any;
+    id?: string;
 }
 
 interface onsNotification {
@@ -863,13 +897,14 @@ interface onsNotification {
      * @param {String} [options.animation] Animation name. Available animations are "none", "fade" and "slide"
      * @param {String} [options.title] Dialog title. Default is "Alert"
      * @param {String} [options.modifier] Modifier for the dialog
+     * @param {String} [options.id] The `<ons-alert-dialog>` element's ID.
      * @param {Function} [options.callback] Function that executes after dialog has been closed
      * @description
      *     Display an alert dialog to show the user a message
      *     The content of the message can be either simple text or HTML
      *     Must specify either message or messageHTML
      */
-    alert(options: alertOptions): void;
+    alert(message: string | alertOptions, options?: alertOptions): Promise<HTMLElement>;
     /**
      * @param {Object} options Parameter object
      * @param {String} [options.message] Confirmation question
@@ -880,6 +915,7 @@ interface onsNotification {
      * @param {String} [options.animation] Animation name. Available animations are "none", "fade" and "slide"
      * @param {String} [options.title] Dialog title. Default is "Confirm"
      * @param {String} [options.modifier] Modifier for the dialog
+     * @param {String} [options.id] The `<ons-alert-dialog>` element's ID.
      * @param {Function} [options.callback]
      *     Function that executes after the dialog has been closed
      *     Argument for the function is the index of the button that was pressed or -1 if the dialog was canceled
@@ -888,7 +924,7 @@ interface onsNotification {
      *     The default button labels are "Cancel" and "OK" but they can be customized
      *     Must specify either message or messageHTML
      */
-    confirm(options: alertOptions): void;
+    confirm(message: string | alertOptions, options?: alertOptions): Promise<HTMLElement>;
     /**
      * @param {Object} options Parameter object
      * @param {String} [options.message] Prompt question
@@ -899,6 +935,7 @@ interface onsNotification {
      * @param {String} [options.animation] Animation name. Available animations are "none", "fade" and "slide"
      * @param {String} [options.title] Dialog title. Default is "Alert"
      * @param {String} [options.modifier] Modifier for the dialog
+     * @param {String} [options.id] The `<ons-alert-dialog>` element's ID.
      * @param {Function} [options.callback]
      *     Function that executes after the dialog has been closed
      *     Argument for the function is the value of the input field or null if the dialog was canceled
@@ -906,10 +943,61 @@ interface onsNotification {
      *     Display a dialog with a prompt to ask the user a question
      *     Must specify either message or messageHTML
      */
-    prompt(options: alertOptions): void;
+    prompt(message: string | alertOptions, options?: alertOptions): Promise<HTMLElement>;
+}
+
+interface OnsSpeedDialElement{
+    /**
+     * @description Show the speed dial.
+     */
+    show(): void;
+    /**
+     * @description Hide the speed dial.
+     */
+    hide(): void;
+    /**
+     * @description Show the speed dial items.
+     */
+    showItems(): void;
+    /**
+     * @description Hide the speed dial items.
+     */
+    hideItems(): void;
+    /**
+     * @description Toggle visibility.
+     */
+    toggle(): void;
+    /**
+     * @description Toggle item visibility.
+     */
+    toggleItems(): void;     
+    /**
+     * @description Whether the element is disabled or not.
+     */
+    disabled: boolean;
+    /**
+     * @description Whether the element is inline or not.
+     */
+    inline: boolean;
+    /**
+     * @description Whether the element is visible or not.
+     */
+    visible: boolean;
 }
 
 interface onsOrientation {
+    /**
+     * @description Add an event listener.
+     */
+    on(eventName: string, listener: Function): void;
+    /**
+     * @description Add an event listener that's only triggered once.
+     */
+    once(eventName: string, listener: Function): void;
+    /**
+     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed.
+     */
+    off(eventName: string, listener?: Function): void;
     /**
      * @return {Boolean} Will be true if the current orientation is portrait mode
      * @description Returns whether the current screen orientation is portrait or not
@@ -920,27 +1008,14 @@ interface onsOrientation {
      * @description Returns whether the current screen orientation is landscape or not
      */
     isLandscape(): boolean;
-    /**
-     * @description Add an event listener
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    on(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Add an event listener that's only triggered once
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    once(eventName: string, listener: (eventObject: any) => any): void;
-    /**
-     * @description Remove an event listener. If the listener is not specified all listeners for the event type will be removed
-     * @param {String} eventName Name of the event
-     * @param {Function} listener Function to execute when the event is triggered
-     */
-    off(eventName: string, listener?: (eventObject: any) => any): void;
 }
 
 interface onsPlatform {
+    /**
+     * @param  {string} platform Name of the platform. Possible values are: "opera", "firefox", "safari", "chrome", "ie", "android", "blackberry", "ios" or "wp".
+     * @description Sets the platform used to render the elements. Useful for testing.
+     */
+    select(platform: string): void;
     /**
      * @description Returns whether app is running in Cordova
      * @return {Boolean}
@@ -1012,6 +1087,8 @@ interface onsPlatform {
      * @return {Boolean}
      */
     isIOS7above(): boolean;
+    /**
+     *
+     */
+    isEdge(): boolean;
 }
-
-declare var ons: onsStatic;

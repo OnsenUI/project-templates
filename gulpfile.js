@@ -37,15 +37,15 @@ gulp.task('update-onsenui', function(done) {
       gulp.src('temp/OnsenUI/js/*.js')
         .pipe(gulp.dest('base/www/lib/onsen/js/'))
         .on('end', function() {
-          gulp.src('temp/angular/**/*')
-            .pipe(gulp.dest('base/www/lib/angular/'))
-            .on('end', function() {
+          //gulp.src('temp/angular/**/*')
+          //  .pipe(gulp.dest('base/www/lib/angular/'))
+          //  .on('end', function() {
               gulp.src('temp/OnsenUI/{css,stylus}/**/*')
                 .pipe(gulp.dest('base/www/lib/onsen/'))
                 .on('end', function() {
                   del(['temp'], done);
                 });
-            });
+          //  });
         });
     });
 });
@@ -265,7 +265,7 @@ gulp.task('generate-vsix', ['compress-VS2015'], function(done) {
     .pipe(gulp.dest('VS2015/gen/VSIX/'))
     .on('end', function() {
       gulp.src(['VS2015/gen/*.zip'])
-        .pipe(gulp.dest('VS2015/gen/VSIX/ProjectTemplates/Apache%20Cordova%20Apps/'))
+        .pipe(gulp.dest('VS2015/gen/VSIX/ProjectTemplates/Monaca/'))
         .on('end', function() {
           gulp.src(['VS2015/gen/VSIX/**/*'], {dot: false, base: 'VS2015/gen/VSIX'})
           .pipe($.zip('Onsen UI Extension.vsix'))

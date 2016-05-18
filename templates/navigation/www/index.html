@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- JS dependencies (order matters!) -->
+  <script src="scripts/platformOverrides.js"></script>
+  <script src="lib/onsen/js/onsenui.js"></script>
+
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="lib/onsen/css/onsenui.css" />
+  <link rel="stylesheet" href="lib/onsen/css/onsen-css-components-blue-basic-theme.css" />
+
+  <title>Onsen UI Navigation</title>
+
+  <!-- App init -->
+  <script src="js/app.js"></script>
+
+  <style>
+    .picture {
+      background-color: #ccc;
+      width: 50px;
+      height: 50px;
+    }
+
+    .label {
+      font-size: 12px;
+      color: #999;
+      float: right;
+      padding-top: 10px;
+    }
+
+    #main-list div.right,
+    #detail-list div.right {
+      display: inline;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!-- Cordova reference -->
+  <script src="cordova.js"></script>
+  <script src="scripts/index.js"></script>
+  <!-- -->
+
+  <ons-navigator id="myNavigator">
+    <ons-page id="home-page">
+      <ons-toolbar>
+        <div class="center">Navigation</div>
+      </ons-toolbar>
+
+      <ons-list id="main-list">
+        <!-- This list will be filled on page initialization -->
+      </ons-list>
+    </ons-page>
+  </ons-navigator>
+
+  <ons-template id="detail.html">
+    <ons-page id="detail-page">
+      <ons-toolbar>
+        <div class="left">
+          <ons-back-button>Back</ons-back-button>
+        </div>
+        <div class="center">Details</div>
+      </ons-toolbar>
+
+      <ons-list id="detail-list" modifier="inset" style="margin-top: 10px">
+        <ons-list-item modifier="longdivider" tappable onclick="alertMessage()">
+          <div class="left">
+            <div class="list__item__thumbnail picture"></div>
+          </div>
+          <div class="center">
+            <div id="title" class="list__item__title"></div>
+            <div id="desc" class="list__item__subtitle"></div>
+          </div>
+          <div class="right">
+            <span id="label" class="label"></span>
+          </div>
+        </ons-list-item>
+
+        <ons-list-item modifier="chevron" tappable onclick="app.alertMessage()">
+          <div class="left">
+            <ons-icon icon="ion-chatboxes" class="list__item__icon" fixed-width style="color: #ccc"></ons-icon>
+          </div>
+          <div class="center">
+            Add a note
+          </div>
+          <ons-if class="right" platform="android">
+            <ons-icon icon="md-info-outline"></ons-icon>
+          </ons-if>
+        </ons-list-item>
+      </ons-list>
+
+      <!-- This list will be filled on page initialization -->
+      <ons-list id="lorem-list" style="margin-top: 10px">
+        <ons-list-item>
+          <div class="center">
+            <div class="list__item__title">Lorem ipsum dolor sit amet</div>
+            <div class="list__item__subtitle">Lorem ipsum dolor sit amet, consectetur adipisicing elit, incididunt ut labore et dolore magna aliqua.</div>
+          </div>
+        </ons-list-item>
+      </ons-list>
+    </ons-page>
+  </ons-template>
+</body>
+</html>
