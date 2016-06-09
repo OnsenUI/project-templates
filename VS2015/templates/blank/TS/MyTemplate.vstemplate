@@ -64,6 +64,7 @@
             <ProjectItem ReplaceParameters="true" TargetFileName="onsenui.d.ts">onsenui.d.ts</ProjectItem>
           </Folder>
         </Folder>
+        <ProjectItem ReplaceParameters="true" TargetFileName="tsconfig.json">tsconfig.json</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="index.ts">index.ts</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="platformOverrides.ts">platformOverrides.ts</ProjectItem>
       </Folder>
