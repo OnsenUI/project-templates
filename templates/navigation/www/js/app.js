@@ -67,10 +67,10 @@
     }
 
     if(page.id === "detail-page") {
-      var item = items[page.data.itemIndex];
-      page.querySelector('#title').innerHTML = item.title;
-      page.querySelector('#desc').innerHTML = item.desc;
-      page.querySelector('#label').innerHTML = item.label;
+      var item = items[(page.data || {}).itemIndex] || {};
+      page.querySelector('#title').innerHTML = item.title || 'foo';
+      page.querySelector('#desc').innerHTML = item.desc || 'bar';
+      page.querySelector('#label').innerHTML = item.label || 'baz';
 
       var i = 5,
         onsListContent = '',
